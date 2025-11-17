@@ -1,0 +1,205 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "image_banner": {
+      "type": "image-banner",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "<p>Our Events</p>",
+            "heading_size": "extra-large",
+            "heading_style": "default",
+            "heading_tag": "h2",
+            "highlight_option": "underline",
+            "word_animation_color": "#ffffff"
+          }
+        }
+      },
+      "block_order": [
+        "heading"
+      ],
+      "settings": {
+        "image": "",
+        "image_overlay_opacity": 40,
+        "image_height": "small",
+        "desktop_content_position": "bottom-center",
+        "show_text_box": false,
+        "desktop_content_alignment": "center",
+        "ignore_spacing": false,
+        "color_scheme_1": "",
+        "margin_spacing": "negative",
+        "margin_top": 0,
+        "mobile_content_alignment": "center",
+        "show_text_below": false
+      }
+    },
+    "events_calendar": {
+      "type": "events-calendar",
+      "blocks": {
+        "event_1": {
+          "type": "event",
+          "settings": {
+            "image": "",
+            "event_date": 12,
+            "event_month": "Apr",
+            "hide_date": false,
+            "event_time": "Saturday, 7:30pm",
+            "event_price": "$10",
+            "event_heading": "Stylish and Functional Kids' Rooms",
+            "heading_size": "medium",
+            "heading_tag": "h2",
+            "event_description": "<p>Join us for an exclusive event showcasing our latest collection of kids' furniture! Explore beautifully designed, functional pieces that make the perfect addition to any child’s room. </p>",
+            "event_location": "Showroom, 202 Creative Avenue",
+            "link_label": "Book Now",
+            "link": "",
+            "show_text_box": false,
+            "image_overlay_opacity": 70,
+            "color_scheme_1": ""
+          }
+        },
+        "event_2": {
+          "type": "event",
+          "settings": {
+            "image": "",
+            "event_date": 12,
+            "event_month": "Apr",
+            "hide_date": false,
+            "event_time": "Sunday, 8:30pm",
+            "event_price": "$20",
+            "event_heading": "Storytime with Friends",
+            "heading_size": "medium",
+            "heading_tag": "h2",
+            "event_description": "<p>Bring your child to an exciting storytime event! Our storytelling session will bring classic tales and new adventures to life, sparking your little one’s imagination. </p>",
+            "event_location": "Local Library, Kids' Corner",
+            "link_label": "Order Now",
+            "link": "",
+            "show_text_box": false,
+            "image_overlay_opacity": 60,
+            "color_scheme_1": ""
+          }
+        },
+        "event_3": {
+          "type": "event",
+          "settings": {
+            "image": "",
+            "event_date": 18,
+            "event_month": "Sep",
+            "hide_date": false,
+            "event_time": "Monday, 9:30pm",
+            "event_price": "$10",
+            "event_heading": "Creative Playtime Workshop",
+            "heading_size": "medium",
+            "heading_tag": "h2",
+            "event_description": "<p>This workshop is designed for kids of all ages to explore their artistic side through hands-on activities and group projects. </p>",
+            "event_location": "Community Center, 123 Main Street",
+            "link_label": "Book Now",
+            "link": "",
+            "show_text_box": false,
+            "image_overlay_opacity": 60,
+            "color_scheme_1": ""
+          }
+        }
+      },
+      "block_order": [
+        "event_1",
+        "event_2",
+        "event_3"
+      ],
+      "settings": {
+        "caption": "",
+        "text_style": "caption-with-letter-spacing",
+        "text_size": "medium",
+        "heading": "",
+        "heading_size": "medium",
+        "heading_style": "default",
+        "heading_tag": "h2",
+        "banner_height": "large",
+        "animate_slider": true,
+        "full_width": false,
+        "disable_animation": true,
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 0,
+        "ignore_spacing": true,
+        "margin_spacing": "positive",
+        "margin_top": 60
+      }
+    },
+    "rich_text": {
+      "type": "rich-text",
+      "blocks": {
+        "image": {
+          "type": "image",
+          "settings": {
+            "image": ""
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "<p>Subscribe to our <em>newsletter</em> today and unlock exclusive benefits!</p>",
+            "heading_size": "medium",
+            "heading_style": "default",
+            "heading_tag": "h2",
+            "highlight_option": "underline-hand",
+            "word_animation_color": "#7771a7"
+          }
+        }
+      },
+      "block_order": [
+        "image",
+        "heading"
+      ],
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "full_width": true,
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 32,
+        "ignore_spacing": false,
+        "margin_spacing": "negative",
+        "margin_top": 0,
+        "mobile_content_alignment": "center"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "blocks": {
+        "email_form": {
+          "type": "email_form",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "email_form"
+      ],
+      "settings": {
+        "full_width": true,
+        "enable_terms": false,
+        "terms_label": "<p>I agree to receive marketing emails</p>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 36,
+        "ignore_spacing": true,
+        "margin_spacing": "negative",
+        "margin_top": 0
+      }
+    }
+  },
+  "order": [
+    "main",
+    "image_banner",
+    "events_calendar",
+    "rich_text",
+    "newsletter"
+  ]
+}

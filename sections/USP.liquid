@@ -1,0 +1,97 @@
+<div class="product-usp-section" style="background-color: #FDF6EA; padding: 30px 20px; margin: 30px 0; border-radius: 8px;">
+  <div class="usp-container" style="max-width: 600px; margin: 0 auto;">
+    
+    <!-- USP 1: Gratis verzending -->
+    <div class="usp-item" style="display: flex; align-items: flex-start; margin-bottom: 20px; opacity: 0; animation: fadeInUp 0.6s ease forwards;">
+      <div class="usp-icon" style="margin-right: 15px; color: #7eb5a6; font-size: 24px; transition: transform 0.3s ease;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 7h-3V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v3H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path>
+        </svg>
+      </div>
+      <div class="usp-content">
+        <h3 style="margin: 0 0 5px 0; font-size: 16px; font-weight: 600; color: #4A3C35;">Gratis verzending</h3>
+        <p style="margin: 0; font-size: 14px; color: #4A3C35; line-height: 1.5; opacity: 0.8;">Op alle bestellingen in Nederland en België</p>
+      </div>
+    </div>
+
+    <!-- USP 2: Zacht en babyproof -->
+    <div class="usp-item" style="display: flex; align-items: flex-start; margin-bottom: 20px; opacity: 0; animation: fadeInUp 0.6s ease 0.15s forwards;">
+      <div class="usp-icon" style="margin-right: 15px; color: #7eb5a6; font-size: 24px; transition: transform 0.3s ease;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+      </div>
+      <div class="usp-content">
+        <h3 style="margin: 0 0 5px 0; font-size: 16px; font-weight: 600; color: #4A3C35;">Zacht en babyproof</h3>
+        <p style="margin: 0; font-size: 14px; color: #4A3C35; line-height: 1.5; opacity: 0.8;">Veilige materialen voor de gevoelige babyhuid</p>
+      </div>
+    </div>
+
+    <!-- USP 3: Familiebedrijf -->
+    <div class="usp-item" style="display: flex; align-items: flex-start; opacity: 0; animation: fadeInUp 0.6s ease 0.3s forwards;">
+      <div class="usp-icon" style="margin-right: 15px; color: #7eb5a6; font-size: 24px; transition: transform 0.3s ease;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <div class="usp-content">
+        <h3 style="margin: 0 0 5px 0; font-size: 16px; font-weight: 600; color: #4A3C35;">Nederlands familiebedrijf</h3>
+        <p style="margin: 0; font-size: 14px; color: #4A3C35; line-height: 1.5; opacity: 0.8;">Met liefde en zorg sinds 2016</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  /* Fade in from bottom animatie */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Subtiele hover animatie op iconen */
+  .usp-item:hover .usp-icon {
+    transform: scale(1.1);
+  }
+
+  /* Subtiele hover op hele item */
+  .usp-item {
+    transition: transform 0.2s ease;
+  }
+
+  .usp-item:hover {
+    transform: translateX(3px);
+  }
+
+  @media (max-width: 768px) {
+    .product-usp-section {
+      padding: 20px 15px !important;
+    }
+    .usp-item {
+      margin-bottom: 15px !important;
+    }
+    
+    /* Minder beweging op mobiel */
+    .usp-item:hover {
+      transform: translateX(2px);
+    }
+  }
+
+  /* Accessibility: verminder animaties voor gebruikers die dit prefereren */
+  @media (prefers-reduced-motion: reduce) {
+    .usp-item {
+      animation: none !important;
+      opacity: 1 !important;
+    }
+  }
+</style>

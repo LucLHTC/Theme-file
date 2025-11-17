@@ -1,0 +1,190 @@
+{% comment %}
+  Renders product variant options
+
+  Accepts:
+  - product: {Object} product object.
+  - option: {Object} current product_option object.
+  - block: {Object} block object.
+  - picker_type: {String} type of picker to display
+  - name_suffix: {String} optional suffix for input/select name to namespace per block (e.g. "-{{ section.id }}-{{ block.id }}")
+
+  Usage:
+  {% render 'product-variant-options',
+    product: product,
+    option: option,
+    block: block,
+    product_form_id: product_form_id,
+    name_suffix: name_suffix
+  %}
+{% endcomment %}
+
+{%- liquid
+  assign product_form_id = product_form_id | default: 'product-form-' | append: section.id
+  assign ns = name_suffix | default: ''
+-%}
+
+{%- for value in option.values -%}
+  {%- liquid
+    assign is_selected  = value.selected
+    assign is_available = value.available
+
+    if value.swatch and value.swatch.image
+      assign image_url  = value.swatch.image | image_url: width: 50
+      assign swatch_css = 'url(' | append: image_url | append: ')'
+    elsif value.swatch and value.swatch.color
+      assign swatch_css = 'rgb(' | append: value.swatch.color.rgb | append: ')'
+    else
+      assign swatch_css = null
+    endif
+
+    assign input_id = section.id | append: '-' | append: block.id | append: '-' | append: option.position | append: '-' | append: forloop.index0
+  -%}
+
+  {%- if block.settings.picker_type != 'dropdown' -%}
+    <input
+      type="radio"
+      id="{{ input_id }}"
+      name="options[{{ option.name | escape }}]{{ ns }}"
+      value="{{ value.name | escape }}"
+      form="{{ product_form_id }}"
+      data-option-value-id="{{ value.id }}"
+      {% if is_selected %}checked{% endif %}
+      {% unless is_available %}class="disabled" aria-disabled="true"{% endunless %}
+    >
+
+    {%- liquid assign swatch_count = option.values | map: 'swatch' | compact | size -%}
+    {% if block.settings.swatch_shape != 'none' and swatch_count > 0 %}
+
+      {%- comment -%}
+        FAKE STOCK BADGE (wordt via JS gevuld en per product in localStorage bewaard)
+        We plaatsen 'm direct vóór het label zodat hij visueel erboven kan staan.
+      {%- endcomment -%}
+      <span
+        class="mlb-fake-stock"
+        data-mlb-option-id="{{ value.id }}"
+        aria-hidden="true"
+      ></span>
+
+      <label
+        class="color-swatch swatch-input__label{% if block.settings.swatch_shape == 'square' %} swatch-input__label--square{% endif %}"
+        for="{{ input_id }}"
+        data-option="{{ value.name }}"
+        title="{{ value.name }}"
+        tabindex="0"
+        {% unless is_available %}aria-disabled="true"{% endunless %}
+      >
+        {% render 'swatch', swatch: value.swatch, shape: block.settings.swatch_shape %}
+      </label>
+    {% else %}
+      <label class="variant-buttons{% unless is_available %} option-disabled{% endunless %}" for="{{ input_id }}">
+        {{ value.name }}
+        {% unless is_available %}
+          <span class="visually-hidden">{{ 'products.product.variant_sold_out_or_unavailable' | t }}</span>
+        {% endunless %}
+      </label>
+    {% endif %}
+
+  {%- else -%}
+    <option
+      value="{{ value.name | escape }}"
+      data-option-value-id="{{ value.id }}"
+      {% if is_selected %}selected="selected"{% endif %}
+      {% if swatch_css %}data-option-swatch-value="{{ swatch_css }}"{% endif %}
+      {%- unless is_available -%}
+        aria-disabled="true"
+        data-unavailable="true"
+        class="option-disabled"
+      {%- endunless -%}
+    >
+      {% unless is_available %}
+        {{- 'products.product.value_unavailable' | t: option_value: value.name -}}
+      {% else %}
+        {{- value.name -}}
+      {% endunless %}
+    </option>
+  {%- endif -%}
+{%- endfor -%}
+
+<script>
+  // A11y: spatie/enter activeert swatch-label
+  window.__swatchA11yBound = window.__swatchA11yBound || false;
+  if (!window.__swatchA11yBound) {
+    window.__swatchA11yBound = true;
+    document.addEventListener('keydown', function (e) {
+      if (e.key === ' ' || e.key === 'Enter' || e.keyCode === 32 || e.keyCode === 13) {
+        const el = document.activeElement;
+        if (el && el.classList && el.classList.contains('color-swatch')) {
+          e.preventDefault();
+          el.click();
+        }
+      }
+    });
+  }
+
+  // ------------------------------------------------------------
+  // My Little Bambino – Fake Stock Badges voor Swatches
+  // ------------------------------------------------------------
+  (function(){
+    // Injecteer styling slechts één keer
+    if (!document.getElementById('mlb-fake-stock-style')) {
+      var s = document.createElement('style');
+      s.id = 'mlb-fake-stock-style';
+      s.textContent = `
+        .mlb-fake-stock{
+          display:block;
+          margin: 0 0 4px 2px;
+          font-size: 12px;
+          line-height: 1.1;
+          color: #6C0E23; /* MLB accent */
+          opacity: 0.95;
+          letter-spacing: 0.2px;
+        }
+        /* nette spacing met themeklassen */
+        .swatch-input__label + .mlb-fake-stock { margin-top: 4px; } /* fallback als volgorde ooit wisselt */
+        @media (min-width: 990px){
+          .mlb-fake-stock{ font-size: 12px; }
+        }
+      `;
+      document.head.appendChild(s);
+    }
+
+    // Init slechts één keer per pagina
+    if (window.__mlbFakeStockInit) return;
+    window.__mlbFakeStockInit = true;
+
+    var key = "mlbFakeStock-v2-{{ product.id }}";
+    var nodes = document.querySelectorAll('.mlb-fake-stock');
+
+    if (!nodes.length) return;
+
+    // Lees bestaande mapping (optionValueId -> number)
+    var map;
+    try { map = JSON.parse(localStorage.getItem(key) || 'null'); } catch(e){ map = null; }
+    if (!map) {
+      map = {};
+      // ~66% van de swatches krijgen een waarde 1..9 (onder 10 voor urgency)
+      nodes.forEach(function(n){
+        var id = n.getAttribute('data-mlb-option-id');
+        if (!id) return;
+        if (Math.random() < 0.66) {
+          map[id] = Math.floor(Math.random()*9) + 1; // 1–9
+        } else {
+          map[id] = 0; // geen badge
+        }
+      });
+      try { localStorage.setItem(key, JSON.stringify(map)); } catch(e){}
+    }
+
+    // Render badges
+    nodes.forEach(function(n){
+      var id = n.getAttribute('data-mlb-option-id');
+      var v  = map && map[id] ? parseInt(map[id], 10) : 0;
+      if (v > 0) {
+        n.textContent = "Voorraad: " + v + " stuks";
+      } else {
+        // laat leeg als 0
+        n.textContent = "";
+      }
+    });
+  })();
+</script>

@@ -1,0 +1,50 @@
+<div class="mlb-inject-img"
+     style="--w-desktop: 350px; --w-mobile: 280px; --y-desktop: 10px; --y-mobile: 5px; --z: 3;">
+  <img
+    src="https://cdn.shopify.com/s/files/1/0927/0034/4706/files/Biztonsagos_fizetes_22.png?v=1758727116"
+    alt="Veilige betaling"
+    loading="lazy"
+  >
+</div>
+
+<style>
+/* Links uitlijnen */
+.mlb-inject-img{
+  display:flex;
+  justify-content:flex-start;   /* was center */
+  align-items:flex-start;
+  text-align:left;              /* overrulet evt. parent center */
+}
+
+.mlb-inject-img img{
+  width: var(--w-desktop);
+  height:auto;
+  transform: translateY(var(--y-desktop));
+  position: relative;
+  z-index: var(--z);
+  margin: 0;                    /* voorkom auto-centering/margins */
+}
+
+@media (max-width: 749px){
+  .mlb-inject-img img{
+    width: var(--w-mobile);
+    transform: translateY(var(--y-mobile));
+  }
+}
+
+/* Optioneel: laat de afbeelding OVER andere segmenten zweven zonder layout te verplaatsen. */
+/*
+.mlb-inject-img{ position:relative; }
+.mlb-inject-img img{
+  position:absolute;
+  left:0;                          /* was 50% */
+  transform:translate(0, var(--y-desktop));  /* uitlijnen links */
+  pointer-events:none;
+}
+@media (max-width: 749px){
+  .mlb-inject-img img{
+    transform:translate(0, var(--y-mobile));
+  }
+}
+*/
+</style>

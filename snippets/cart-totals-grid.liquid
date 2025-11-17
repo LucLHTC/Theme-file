@@ -1,0 +1,56 @@
+{%- comment -%}
+Cart totals (MLB)
+- Subtotaal = items_subtotal_price (zonder kortingen)
+- Korting = Subtotaal - Totaal (alleen tonen als > 0)
+- Verzendkosten = altijd Gratis (0,00)
+- Totaal = cart.total_price (incl. kortingen, excl. shipping/tax)
+{%- endcomment -%}
+
+{%- assign subtotal_cents = cart.items_subtotal_price -%}
+{%- assign total_cents    = cart.total_price -%}
+{%- assign discount_cents = subtotal_cents | minus: total_cents -%}
+{%- if discount_cents < 0 -%}{% assign discount_cents = 0 %}{%- endif -%}
+
+<div class="totals-grid">
+  <!-- Subtotaal (zonder kortingen) -->
+  <div class="totals-subtotal">Subtotaal</div>
+  <div class="totals-subtotal-value">
+    {{ subtotal_cents | money }}
+  </div>
+
+  <!-- Korting (alleen tonen als er korting is) -->
+  {%- if discount_cents > 0 -%}
+    <div class="totals-subtotal">Korting</div>
+    <div class="totals-subtotal-value">−{{ discount_cents | money }}</div>
+  {%- endif -%}
+
+  <!-- Verzendkosten: altijd gratis -->
+  <div class="totals-subtotal">Verzendkosten</div>
+  <div class="totals-subtotal-value">Gratis</div>
+
+  <!-- Totaal (cart.total_price, want shipping = 0) -->
+  <div class="totals-subtotal totals-row--grand">Totaal</div>
+  <div class="totals-subtotal-value totals-row--grand">
+    {{ total_cents | money }}
+  </div>
+</div>
+
+<style>
+  :root{ --totals-font: 'Grandstander', var(--font-body-family, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif); }
+  .totals-grid{
+    display:grid;
+    grid-template-columns: 1fr auto;
+    column-gap:.75rem;
+    row-gap:.65rem;
+    align-items:center;
+    font-family:var(--totals-font);
+  }
+  .totals-grid .totals-subtotal{ margin:0; font-size:1.3rem; line-height:1.35; }
+  .totals-grid .totals-subtotal-value{ margin:0; font-weight:600; }
+  .totals-grid .totals-row--grand{
+    border-top:1px solid rgba(0,0,0,.12);
+    margin-top:.6rem;
+    padding-top:.75rem;
+    font-weight:700;
+  }
+</style>

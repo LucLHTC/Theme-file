@@ -1,0 +1,196 @@
+{% if cart != empty %}
+{%- comment -%}
+MLB – Bundelvoordeel (Apple-style, lightweight)
+- Alleen stapelkorting (2/3/4/5 = 10/15/20/25%)
+- Grandstander geforceerd
+- Zachte card, subtiele schaduw, gradient progress
+- Toont alleen bij ≥1 item, auto-hide bij 0
+- Minimal JS: throttle + enkele observers/listeners
+{%- endcomment -%}
+
+<style>
+  :root{
+    --mlb-ink:#3A2C25;
+    --mlb-ink-soft:#6b5b55;
+    --mlb-border:rgba(58,44,37,.12);
+    --mlb-card:#FCF6EE;      /* iets lichter dan achtergrond */
+    --mlb-track:#F5EBDD;
+    --mlb-outline:#E9DCD1;
+    --mlb-fill:#4A3C35;
+    --mlb-pill:#EFE6DA;
+  }
+
+  /* Forceer Grandstander binnen de snippet */
+  .mlb-bundle, .mlb-bundle *{
+    font-family:
+      var(--font-heading-family,
+        var(--font-body-family,
+          'Grandstander','Grandstander Variable',cursive,
+          system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif
+        )
+      ) !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .mlb-bundle[hidden]{display:none!important;}
+
+  /* Card */
+  .mlb-bundle{
+    background:var(--mlb-card);
+    border:1px solid var(--mlb-border);
+    border-radius:20px;
+    padding:16px 16px 18px;
+    margin-top:-8px;
+    margin-bottom:32px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.85) inset,
+      0 .5px 0 rgba(58,44,37,.06) inset,
+      0 8px 18px rgba(58,44,37,.06),
+      0 1px 3px rgba(58,44,37,.07);
+  }
+
+  /* Header */
+  .mlb-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+  .mlb-title{color:var(--mlb-ink);font-size:15px;font-weight:700;letter-spacing:.2px;}
+  .mlb-note{color:var(--mlb-ink-soft);font-size:12px;letter-spacing:.1px;flex:1 1 auto;text-align:right;min-width:160px;}
+
+  /* Progress */
+  .mlb-svg{width:100%;height:14px;display:block;margin-top:8px;flex:0 0 100%}
+  .mlb-track{fill:var(--mlb-track)}
+  .mlb-outline{fill:none;stroke:var(--mlb-outline);stroke-width:.9}
+  .mlb-fill{fill:url(#mlbGrad);transition:width .32s cubic-bezier(.22,.61,.36,1)}
+
+  /* Ticks */
+  .mlb-ticks{flex:0 0 100%;display:flex;justify-content:space-between;margin-top:10px;color:var(--mlb-ink-soft);font-size:11.5px}
+  .mlb-tick{position:relative;text-align:center;width:25%;display:flex;flex-direction:column;align-items:center;line-height:1.15;gap:2px}
+  .mlb-tick::before{content:"";position:absolute;left:50%;transform:translateX(-50%);top:-12px;width:2px;height:10px;background:rgba(58,44,37,.18);border-radius:2px}
+  .mlb-qty{opacity:.95}
+  .mlb-disc{font-weight:500}
+  .mlb-tick--active .mlb-qty,.mlb-tick--active .mlb-disc{color:var(--mlb-ink);font-weight:700}
+  .mlb-tick--active .mlb-qty{
+    background:var(--mlb-pill);
+    border:1px solid var(--mlb-outline);
+    padding:3px 8px;border-radius:999px;
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 6px rgba(58,44,37,.06);
+  }
+
+  /* Mobile centreren */
+  @media (max-width:640px){
+    .mlb-row{justify-content:center;text-align:center}
+    .mlb-title,.mlb-note{flex-basis:100%;text-align:center;margin:0}
+  }
+  @media (max-width:420px){.mlb-note{min-width:0}}
+</style>
+
+<div class="mlb-bundle" data-mlb-bundle hidden aria-live="polite">
+  <div class="mlb-row">
+    <div class="mlb-title">Bundelvoordeel</div>
+    <div class="mlb-note" data-note></div>
+
+    <svg class="mlb-svg" viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="mlbGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#4A3C35"/><stop offset="1" stop-color="#3D302A"/>
+        </linearGradient>
+      </defs>
+      <rect class="mlb-track"   x="0" y="0" width="100" height="12" rx="6" ry="6"/>
+      <rect class="mlb-outline" x="0" y="0" width="100" height="12" rx="6" ry="6"/>
+      <rect class="mlb-fill"    x="0" y="0" width="0"   height="12" rx="6" ry="6" data-fill/>
+    </svg>
+
+    <div class="mlb-ticks" data-ticks aria-hidden="true">
+      <div class="mlb-tick" data-tier="2"><span class="mlb-qty">2&nbsp;items</span><span class="mlb-disc">−10%</span></div>
+      <div class="mlb-tick" data-tier="3"><span class="mlb-qty">3&nbsp;items</span><span class="mlb-disc">−15%</span></div>
+      <div class="mlb-tick" data-tier="4"><span class="mlb-qty">4&nbsp;items</span><span class="mlb-disc">−20%</span></div>
+      <div class="mlb-tick" data-tier="5"><span class="mlb-qty">5&nbsp;items</span><span class="mlb-disc">−25%</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  let root = document.currentScript.previousElementSibling;
+  if(!root || !root.hasAttribute('data-mlb-bundle')){
+    root = document.currentScript.parentElement?.querySelector('.mlb-bundle[data-mlb-bundle]') || null;
+  }
+  if(!root || root.dataset.bound) return; root.dataset.bound='1';
+
+  // liquid fallback (alleen voor eerste paint)
+  window.__mlbCart = { items: {{ cart.item_count }} };
+
+  const tiers = [2,3,4,5], disc = {2:10,3:15,4:20,5:25};
+  const el = {
+    note: root.querySelector('[data-note]'),
+    fill: root.querySelector('[data-fill]'),
+    ticks: root.querySelectorAll('[data-ticks] .mlb-tick')
+  };
+
+  const setPct = (r,p)=> r.setAttribute('width', Math.max(0,Math.min(100,p)).toFixed(2));
+  const highlight = active => el.ticks.forEach(t=>{
+    t.classList.toggle('mlb-tick--active', parseInt(t.dataset.tier,10)===active);
+  });
+
+  // superlichte throttle
+  let rafLock=false;
+  const schedule = () => { if(rafLock) return; rafLock=true; requestAnimationFrame(()=>{ rafLock=false; render(); }); };
+
+  function readItems(){
+    // tel alle quantity inputs op (page & drawer)
+    let items = 0;
+    const qtySel = '.cart-item-quantity input.quantity-input, input[name="updates[]"]';
+    const inputs = document.querySelectorAll(qtySel);
+    inputs.forEach(i => { const v = parseInt(i.value||'0',10); if(!isNaN(v)) items += v; });
+    if(inputs.length===0) items = 0;
+    if(!items) items = window.__mlbCart?.items || 0;
+    return items;
+  }
+
+  function render(){
+    const items = readItems();
+
+    // hide bij leeg
+    if(items <= 0){ root.setAttribute('hidden',''); return; }
+    root.removeAttribute('hidden');
+
+    const next = tiers.find(t => items < t);
+    let tier = 1;
+
+    if(!next){
+      setPct(el.fill, 100);
+      el.note.textContent = 'Bundelkorting toegepast −25%';
+      tier = 5;
+    } else {
+      const idx   = tiers.indexOf(next);
+      const base  = idx*25;
+      const prev  = idx===0 ? 1 : tiers[idx-1];
+      const prog  = Math.max(0, Math.min(items,next) - prev) / Math.max(1,(next-prev));
+      setPct(el.fill, Math.min(99, base + prog*25));
+
+      const need  = next - items;
+      el.note.innerHTML = `Nog <strong>${need}</strong> ${need===1?'item':'items'} voor −${disc[next]}%`;
+      tier = items>=5 ? 5 : items;
+    }
+    highlight((tier>=2 && tier<=5) ? tier : 1);
+  }
+
+  /* listeners – zo licht mogelijk */
+  document.addEventListener('change', e => {
+    if(e.target?.matches('.quantity-input, input[name="updates[]"]')) schedule();
+  }, true);
+
+  document.addEventListener('click', e => {
+    if(e.target?.matches('[name="plus"],[name="minus"], .button--tertiary, cart-remove-button, button[name="remove"], a[href*="change?line"]')) schedule();
+  }, true);
+
+  // observeer alleen het cartgebied
+  const target = document.querySelector('.cart-contents') || document.querySelector('#main-cart-items') || document.body;
+  if('MutationObserver' in window && target){
+    new MutationObserver(() => schedule()).observe(target, {childList:true,subtree:true});
+  }
+
+  // eerste paint
+  render();
+})();
+</script>
+{% endif %}

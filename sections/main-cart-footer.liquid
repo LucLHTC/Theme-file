@@ -1,0 +1,417 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-totals.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+/* Grandstander alleen voor cart footer */
+@import url('https://fonts.googleapis.com/css2?family=Grandstander:wght@400;600;700&display=swap');
+
+:root{
+  --totals-font: 'Grandstander', var(--font-body-family, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif);
+}
+
+.section-{{ section.id }}-padding {
+  padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+  padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  padding-left: {{ section.settings.padding_left | times: 0.75 | round: 0 }}px;
+  padding-right: {{ section.settings.padding_right | times: 0.75 | round: 0 }}px;
+}
+
+.main-cart-footer { border-radius: var(--media-radius); }
+
+/* Promo message: alleen font wijzigen; bold via <strong> */
+.promo-message.cart-items,
+.promo-message.cart-items p{ font-family: var(--totals-font); }
+.promo-message.cart-items strong{ font-weight: 700; }
+
+/* Totals layout & typografie (vergroot) */
+.totals-grid{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  column-gap: .75rem;
+  row-gap:.65rem;
+  align-items:center;
+  font-family: var(--totals-font);
+}
+.totals-grid .totals-subtotal,
+.totals-grid .totals-subtotal-value{
+  margin:0;
+  font-family: var(--totals-font);
+  font-size: 1.44rem;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+.totals-grid .totals-subtotal{ font-weight: 600; text-transform: none; }
+.totals-grid .totals-subtotal-value{ font-weight: 700; }
+.totals-row--grand{
+  font-weight:700;
+  border-top:1px solid rgba(0,0,0,.12);
+  margin-top:.8rem;
+  padding-top:.85rem;
+}
+.totals-row--grand.totals-subtotal-value{ font-size: 1.58rem; }
+
+/* Verberg legacy 1-regel totals als fallback */
+#main-cart-footer .totals:not(.totals-grid){ display:none !important; }
+
+@media screen and (min-width: 750px) {
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    padding-left: {{ section.settings.padding_left }}px;
+    padding-right: {{ section.settings.padding_right }}px;
+  }
+}
+{%- endstyle -%}
+
+<div class="main-cart-footer color-{{ section.settings.color_scheme }} gradient">
+  <div
+    class="page-width{% if cart == empty %} is-empty{% endif %} section-{{ section.id }}-padding"
+    id="main-cart-footer"
+    data-id="{{ section.id }}"
+  >
+    <div>
+      <div class="cart__footer" data-aos="fade-up" data-aos-delay="250">
+        <div class="cart__blocks">
+          {% for block in section.blocks %}
+            {%- case block.type -%}
+              {%- when '@app' -%}
+                {% render block %}
+
+              {%- when 'custom_liquid' -%}
+                {{ block.settings.custom_liquid }}
+
+              {%- when 'text-with-image' -%}
+              <div class="text-with-image-block {% if block.settings.centered_content == true %} centered{% endif %}">
+                {% if block.settings.hide_image != true %}
+                  {%- if block.settings.image != blank -%}
+                    {%- assign image_height = block.settings.image_width
+                      | divided_by: block.settings.image.aspect_ratio
+                    -%}
+                    <div class="cart__footer__image-wrapper" style="max-width: min(100%, {{ block.settings.image_width }}px);">
+                      {{
+                        block.settings.image
+                        | image_url: width: 1100
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '50, 100, 150, 200, 300, 400, 550, 800, 1100',
+                          height: image_height,
+                          width: block.settings.image_width
+                      }}
+                    </div>
+                  {%- else -%}
+                    {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg placeholder' }}
+                  {%- endif -%}
+                {%- endif -%}
+
+                <div
+                  class="cart__footer__text-wrapper {% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}"
+                  {{ block.shopify_attributes }}
+                >
+                  {{- block.settings.text -}}
+                </div>
+              </div>
+
+              {%- when 'subtotal' -%}
+                {% if settings.enable_promo_message %}
+                  <div class="page-width promo-message cart-items">
+                    <p>{{ settings.promo_message }}</p>
+                  </div>
+                {% endif %}
+
+                <div class="js-contents" {{ block.shopify_attributes }}>
+                  {% render 'cart-totals-grid' %}
+
+                  {%- if settings.show_cart_note -%}
+                    <collapsible-row class="product__accordion accordion">
+                      <details id="Details-CartDrawer"{% if settings.cart_note_open %}open{% endif %}>
+                        <summary>
+                          <span class="summary-title">
+                            {{ 'sections.cart.note' | t }}
+                            {% render 'icon-caret' %}
+                          </span>
+                        </summary>
+                        <cart-note class="collapsible__content cart-note field">
+                          <label class="visually-hidden" for="CartDrawer-Note">{{ 'sections.cart.note' | t }}</label>
+                          <textarea
+                            id="CartDrawer-Note"
+                            class="text-area text-area--resize-vertical field-input"
+                            name="note"
+                            placeholder="{{ 'sections.cart.note' | t }}"
+                          >{{ cart.note }}</textarea>
+                        </cart-note>
+                      </details>
+                    </collapsible-row>
+                  {%- endif -%}
+
+                  {% if settings.enable_free_shipping_message and cart != empty %}
+                    {% assign free_shipping_amount = settings.free_shipping_amount %}
+                    {% assign current_cart_total = cart.total_price | divided_by: 100.0 | round: 2 %}
+                    {% assign message_part_before = settings.free_shipping_message | split: '*amount*' | first %}
+                    {% assign message_part_after = settings.free_shipping_message | split: '*amount*' | last %}
+                    {% assign message_part_success = settings.free_shipping_success %}
+                    <shipping-message class="free-shipping-message cart-items" data-shipping-message data-aos="fade-up" data-aos-delay="150" 
+                      data-message-before="{{ message_part_before }}"
+                      data-message-after="{{ message_part_after }}"
+                      data-message-success="{{ message_part_success }}"
+                      data-threshold="{{ free_shipping_amount }}"
+                      data-cart-total="{{ current_cart_total }}">
+                      <p id="free-shipping-message"></p>
+                    </shipping-message>
+                  {% endif %}
+
+                  {% if settings.enable_terms %}
+                    <terms-checkbox class="terms-cart">
+                      <input type="checkbox" id="termsCheckbox" name="termsCheckbox" value="1">
+                      <label for="termsCheckbox">{{ settings.terms_label }}</label>
+                    </terms-checkbox>
+                  {% endif %}
+
+                  <div>
+                    {%- if cart.cart_level_discount_applications.size > 0 -%}
+                      <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                        {%- for discount in cart.cart_level_discount_applications -%}
+                          <li class="discounts-discount discounts-discount--position">
+                            {%- render 'icon-discount' -%}
+                            {{ discount.title }}
+                            (-{{ discount.total_allocated_amount | money }})
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+                  </div>
+                </div>
+
+              {%- else -%}
+                <div class="cart-ctas" {{ block.shopify_attributes }}>
+                  <noscript>
+                    <button type="submit" class="cart-update-button button button--secondary" form="cart">
+                      {{ 'sections.cart.update' | t }}
+                    </button>
+                  </noscript>
+
+                  <button
+                    type="submit"
+                    id="checkout"
+                    class="cart-checkout-button button"
+                    name="checkout"
+                    {% if cart == empty or settings.enable_terms %}
+                      disabled
+                    {% endif %}
+                    form="cart"
+                  >
+                    {{ 'sections.cart.checkout' | t }}
+                  </button>
+                </div>
+
+                {%- if additional_checkout_buttons -%}
+                  <div class="cart__dynamic-checkout-buttons additional-checkout-buttons">
+                    {{ content_for_additional_checkout_buttons }}
+                  </div>
+                {%- endif -%}
+
+                {%- comment -%} Tax/shipping note intentionally removed. {%- endcomment -%}
+            {%- endcase -%}
+          {% endfor %}
+
+          <div id="cart-errors"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* IE fallback (ongewijzigd) */
+  document.addEventListener('DOMContentLoaded', function () {
+    function isIE() {
+      const ua = window.navigator.userAgent;
+      const msie = ua.indexOf('MSIE ');
+      const trident = ua.indexOf('Trident/');
+      return msie > 0 || trident > 0;
+    }
+    if (!isIE()) return;
+    const cartSubmitInput = document.createElement('input');
+    cartSubmitInput.setAttribute('name', 'checkout');
+    cartSubmitInput.setAttribute('type', 'hidden');
+    document.querySelector('#cart').appendChild(cartSubmitInput);
+    document.querySelector('#checkout').addEventListener('click', function () {
+      document.querySelector('#cart').submit();
+    });
+  });
+</script>
+
+<!-- Auto-guard & hard refresh van de section + validatie van staffel -->
+<script>
+  (function(){
+    const SECTION_ID = '{{ section.id }}';
+    const FOOTER_SEL = '#main-cart-footer';
+    const debounce = (fn, ms=120) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; };
+
+    function parseEuroToNumber(str){
+      if(!str) return NaN;
+      // Verwijder alles behalve cijfers, komma en punt; converteer EU decimaal naar .
+      let s = (str + '').replace(/[^\d,.\-]/g,'').replace(/\./g,'').replace(',', '.');
+      // Als er niks bruikbaars overblijft:
+      if(!s || s === '-' || s === '.') return NaN;
+      return parseFloat(s);
+    }
+
+    function expectedShippingFromSubtotal(subtotal){
+      // subtotal in euroâ€™s (xx.yy)
+      if (isNaN(subtotal)) return null;
+      if (subtotal >= 20) return 'Gratis';
+      if (subtotal >= 10) return '2,95';
+      return '5,95';
+    }
+
+    async function reloadSection(sectionId, mountSelector){
+      try{
+        const url = window.location.pathname + '?sections=' + encodeURIComponent(sectionId);
+        const r = await fetch(url, { headers:{'Accept':'application/json'} });
+        if(!r.ok) return;
+        const json = await r.json();
+        const html = json[sectionId];
+        if(!html) return;
+        const mount = document.querySelector(mountSelector);
+        if(!mount) return;
+        mount.outerHTML = html;
+      }catch(e){}
+    }
+
+    const ensureTotalsFooter = debounce(async function(){
+      const root = document.querySelector(FOOTER_SEL);
+      if(!root) return;
+
+      // 1) Als legacy totals zichtbaar zijn: herladen
+      const hasGrid = !!root.querySelector('.totals-grid');
+      const hasLegacyTotals = !!root.querySelector('.totals') && !hasGrid;
+      if(hasLegacyTotals){ await reloadSection(SECTION_ID, FOOTER_SEL); return; }
+
+      if(!hasGrid) return;
+
+      // 2) Valideer staffel: lees Subtotaal & Verzendkosten uit DOM
+      const grid = root.querySelector('.totals-grid');
+      // Subtotaal is de eerste .totals-subtotal-value in onze volgorde
+      const subtotalEl = grid.querySelector('.totals-subtotal + .totals-subtotal-value');
+      const subtotal = parseEuroToNumber(subtotalEl ? subtotalEl.textContent : '');
+      const expected = expectedShippingFromSubtotal(subtotal);
+
+      // Zoek specifiek de "Verzendkosten" heading en pak zâ€™n value (naastliggend p)
+      let shippingValue = null;
+      grid.querySelectorAll('.totals-subtotal').forEach(h=>{
+        if(h.textContent && h.textContent.trim().toLowerCase() === 'verzendkosten'){
+          const val = h.nextElementSibling;
+          if(val) shippingValue = val.textContent.trim();
+        }
+      });
+
+      // Normaliseer shippingValue voor vergelijking
+      let normalized = null;
+      if(shippingValue){
+        if(/gratis/i.test(shippingValue)) normalized = 'Gratis';
+        else {
+          // haal 2,95 uit â‚¬2,95 EUR etc.
+          const n = parseEuroToNumber(shippingValue);
+          if(!isNaN(n)) normalized = n.toFixed(2).replace('.',',');
+        }
+      }
+
+      if(expected && normalized && expected !== normalized){
+        await reloadSection(SECTION_ID, FOOTER_SEL);
+      }
+    }, 120);
+
+    // Triggers
+    document.body.addEventListener('click', (e)=>{
+      if(e.target.closest('.quantity-button') || e.target.classList.contains('quantity__button')) ensureTotalsFooter();
+    }, true);
+    document.body.addEventListener('change', (e)=>{
+      if(e.target && (e.target.name==='updates[]' || e.target.classList.contains('quantity-input') || e.target.classList.contains('quantity__input'))) ensureTotalsFooter();
+    }, true);
+    ['cart:updated','cart:refresh','ajaxProduct:added','cart:change'].forEach(evt=>{
+      document.addEventListener(evt, ensureTotalsFooter);
+    });
+    const mo = new MutationObserver(ensureTotalsFooter);
+    mo.observe(document.body, {childList:true, subtree:true});
+    document.addEventListener('DOMContentLoaded', ensureTotalsFooter);
+  })();
+</script>
+
+<!-- Color the "Gratis" text in shipping cost -->
+<script>
+  (function(){
+    function colorGratisText() {
+      const footer = document.querySelector('#main-cart-footer');
+      if (!footer) return;
+      
+      const grid = footer.querySelector('.totals-grid');
+      if (!grid) return;
+      
+      // Find all value elements in the totals grid
+      const values = grid.querySelectorAll('.totals-subtotal-value');
+      values.forEach(valueEl => {
+        // Check if this element contains "Gratis"
+        if (valueEl.textContent.trim().toLowerCase() === 'gratis') {
+          // Change the color - modify the color value below to your preference
+          valueEl.style.color = '#00B67A'; // Green color - change this to any color you want
+        }
+      });
+    }
+    
+    // Run on page load
+    document.addEventListener('DOMContentLoaded', colorGratisText);
+    
+    // Run when cart updates
+    ['cart:updated', 'cart:refresh', 'ajaxProduct:added', 'cart:change'].forEach(evt => {
+      document.addEventListener(evt, colorGratisText);
+    });
+    
+    // Run immediately in case DOM is already loaded
+    colorGratisText();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-footer.name",
+  "class": "cart__footer-wrapper",
+  "blocks": [
+    { "type": "subtotal", "name": "t:sections.main-cart-footer.blocks.subtotal.name", "limit": 1 },
+    { "type": "buttons", "name": "t:sections.main-cart-footer.blocks.buttons.name", "limit": 1 },
+    {
+      "type": "custom_liquid",
+      "name": "t:sections.main-product.blocks.custom_liquid.name",
+      "settings": [
+        { "type": "liquid", "id": "custom_liquid", "label": "t:sections.main-product.blocks.custom_liquid.settings.custom_liquid.label", "info": "t:sections.main-product.blocks.custom_liquid.settings.custom_liquid.info" }
+      ]
+    },
+    {
+      "type": "text-with-image",
+      "name": "t:sections.main-cart-footer.blocks.text-with-image.name",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "t:sections.main-cart-footer.blocks.text-with-image.settings.image.label" },
+        { "type": "range", "id": "image_width", "min": 200, "max": 1000, "step": 50, "default": 1000, "unit": "px", "label": "t:sections.main-cart-footer.blocks.text-with-image.settings.image_width.label" },
+        { "type": "checkbox", "id": "hide_image", "default": false, "label": "t:sections.main-cart-footer.blocks.text-with-image.settings.hide_image.label" },
+        { "type": "richtext", "id": "text", "default": "<p>Text block</p>", "label": "t:sections.main-cart-footer.blocks.text-with-image.settings.text.label" },
+        { "type": "select", "id": "text_style", "options": [
+          { "value": "body", "label": "t:sections.main-cart-footer.blocks.text-with-image.settings.text_style.options__1.label" },
+          { "value": "uppercase", "label": "t:sections.main-cart-footer.blocks.text-with-image.settings.text_style.options__3.label" }
+        ], "default": "body", "label": "t:sections.main-cart-footer.blocks.text-with-image.settings.text_style.label" },
+        { "type": "checkbox", "id": "centered_content", "default": false, "label": "t:sections.main-cart-footer.blocks.text-with-image.settings.centered_content.label" }
+      ]
+    },
+    { "type": "@app" }
+  ],
+  "settings": [
+    { "type": "header", "content": "t:sections.all.header_color_box.content" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:sections.all.colors.label", "default": "option-1" },
+    { "type": "header", "content": "t:sections.all.padding.section_padding_heading" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_top", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_bottom", "default": 72 },
+    { "type": "range", "id": "padding_left", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_left", "default": 0 },
+    { "type": "range", "id": "padding_right", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_right", "default": 0 }
+  ]
+}
+{% endschema %}

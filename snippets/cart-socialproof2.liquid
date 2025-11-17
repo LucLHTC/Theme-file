@@ -1,0 +1,151 @@
+<style>
+  :root{
+    --mlb-bg:#FDF6EA;
+    --mlb-edge:#EDDCD2;
+    --mlb-text:#3A2C25;
+
+    /* Afstanden boven/onder */
+    --mlb-bubble-mt-desktop: 40px; /* boven desktop */
+    --mlb-bubble-mb-desktop: 20px; /* onder desktop */
+    --mlb-bubble-mt-mobile: 25px;  /* boven mobiel */
+    --mlb-bubble-mb-mobile: 0px;  /* onder mobiel */
+  }
+
+  /* Full-width bubble */
+  .mlb-socialproof{
+    width:100%;
+    margin-top: var(--mlb-bubble-mt-desktop);
+    margin-bottom: var(--mlb-bubble-mb-desktop);
+    background:var(--mlb-bg);
+    border:1px solid var(--mlb-edge);
+    border-radius:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,.05);
+  }
+
+  /* Centered content */
+  .mlb-socialproof__inner{
+    max-width:560px;
+    margin:0 auto;
+    padding:12px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    color:var(--mlb-text);
+    font-family:var(--totals-font, system-ui);
+    line-height:1.25;
+  }
+
+  /* Avatars */
+  .mlb-avatars{ display:flex; align-items:center; flex-shrink:0; }
+  .mlb-avatars img{
+    width:38px; height:38px; object-fit:cover; border-radius:50%;
+    border:2px solid #fff; margin-left:-10px; box-shadow:0 1px 0 rgba(0,0,0,.05);
+  }
+  .mlb-avatars img:first-child{ margin-left:0; }
+
+  /* Text */
+  .mlb-copy{ display:flex; flex-direction:column; gap:4px; min-width:0; text-align:left; }
+  .mlb-head{
+    display:inline-flex; align-items:center;
+    font-size:16px; white-space:nowrap;
+  }
+  .mlb-name{ font-weight:700; }
+  .mlb-count{ font-weight:800; }
+
+  /* Verified image badge */
+  .mlb-check{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:16px; height:16px;
+    margin:0 6px 0 4px;
+    vertical-align:-2px;
+  }
+  .mlb-check img{
+    width:16px; height:16px; object-fit:contain; display:block;
+  }
+
+  .mlb-sub{
+    font-size:15px;
+    opacity:.9;
+  }
+
+  /* Mobile tweaks */
+  @media (max-width: 480px){
+    .mlb-socialproof{
+      margin-top: var(--mlb-bubble-mt-mobile);
+      margin-bottom: var(--mlb-bubble-mb-mobile);
+    }
+    .mlb-socialproof__inner{
+      gap:12px; padding:12px 14px;
+    }
+    .mlb-avatars img{
+      width:34px; height:34px; margin-left:-9px;
+    }
+    .mlb-head{ font-size:14px; }
+    .mlb-sub{ font-size:13px; }
+  }
+
+  @media (max-width: 360px){
+    .mlb-avatars img{ width:32px; height:32px; margin-left:-8px; }
+    .mlb-head{ font-size:13px; }
+  }
+</style>
+
+<div class="mlb-socialproof" role="note" aria-label="Social proof">
+  <div class="mlb-socialproof__inner">
+    <div class="mlb-avatars">
+      <img src="https://cdn.shopify.com/s/files/1/0927/0034/4706/files/Gemini_Generated_Image_svcgvdsvcgvdsvcg_-_Edited.png?v=1760989679" alt="Klant 1" loading="lazy">
+      <img src="https://cdn.shopify.com/s/files/1/0927/0034/4706/files/Gemini_Generated_Image_untqsuntqsuntqsu_-_Edited.png?v=1760989682" alt="Klant 2" loading="lazy">
+      <img src="https://cdn.shopify.com/s/files/1/0927/0034/4706/files/Gemini_Generated_Image_afygnbafygnbafyg_-_Edited.png?v=1760989684" alt="Klant 3" loading="lazy">
+    </div>
+
+    <div class="mlb-copy">
+      <span class="mlb-head">
+        <span class="mlb-name">Sophie</span>
+        <span class="mlb-check" aria-hidden="true">
+          <img src="https://cdn.shopify.com/s/files/1/0927/0034/4706/files/verified_1.png?v=1760996388" alt="Verified badge">
+        </span>
+        en&nbsp;<span class="mlb-count">16.220+</span>&nbsp;ouders
+      </span>
+      <span class="mlb-sub">shoppen hier met vertrouwen.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Script om te garanderen dat het onder de payment-icons blijft staan -->
+<script>
+  (function () {
+    const FOOTER_SEL = '#main-cart-footer';
+    const PAY_IMG_SELECTOR = "img[src*='Biztonsagos_fizetes_25.png']";
+
+    function placeSocialProof() {
+      const root = document.querySelector(FOOTER_SEL);
+      if (!root) return;
+
+      const payImg = root.querySelector(PAY_IMG_SELECTOR);
+      const bubble = root.querySelector('.mlb-socialproof');
+      if (!payImg || !bubble) return;
+
+      // Vind container van betaalicons
+      const iconContainer =
+        payImg.closest('.cart__dynamic-checkout-buttons') ||
+        payImg.parentElement;
+
+      if (!iconContainer) return;
+
+      // Plaats bubble direct onder die container
+      const target = bubble.closest('.mlb-socialproof') || bubble;
+      if (iconContainer.nextElementSibling !== target) {
+        iconContainer.insertAdjacentElement('afterend', target);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', placeSocialProof);
+    ['cart:updated','cart:refresh','ajaxProduct:added','cart:change'].forEach(evt =>
+      document.addEventListener(evt, placeSocialProof)
+    );
+
+    const mo = new MutationObserver(placeSocialProof);
+    mo.observe(document.body, { childList: true, subtree: true });
+  })();
+</script>

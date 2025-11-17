@@ -1,0 +1,189 @@
+{
+    "sections": {
+      "main": {
+        "type": "main-page",
+        "disabled": true,
+        "settings": {
+          "padding_top": 36,
+          "padding_bottom": 36
+        }
+      },
+      "video_background": {
+        "type": "video-background",
+        "settings": {
+          "caption": "Caption goes here",
+          "text_style": "caption-with-letter-spacing",
+          "text_size": "medium",
+          "heading": "Our Team",
+          "heading_size": "large",
+          "heading_tag": "h2",
+          "text": "<p>Meet the passionate people behind our brand — a diverse team driven by creativity, collaboration, and a shared commitment to excellence.</p>",
+          "button_label": "Meet the Team",
+          "link": "",
+          "video_style": "background",
+          "full_width_background": false,
+          "background_height": "small",
+          "box_align": "middle-left",
+          "box_vertical_align": "middle",
+          "text_align": "left",
+          "ignore_box": false,
+          "content_opacity": 1,
+          "blur": 0,
+          "opacity": 0.5,
+          "color_scheme": "option-3",
+          "color_scheme_1": "",
+          "padding_top": 36,
+          "padding_bottom": 0,
+          "ignore_spacing": false,
+          "background_height_mobile": "small",
+          "margin_spacing": "negative",
+          "margin_top": 0
+        }
+      },
+      "tabs": {
+        "type": "tabs",
+        "blocks": {
+          "tab_1": {
+            "type": "tab",
+            "settings": {
+              "heading": "2015",
+              "tab_image_width": 1000,
+              "hide_image": false,
+              "row_content": "<p>Our journey started in 2015 with a simple idea and a passionate team. From day one, we’ve been focused on creating something meaningful and lasting.</p>",
+              "button_label": "",
+              "button_link": "",
+              "button_style_secondary": false
+            }
+          },
+          "tab_2": {
+            "type": "tab",
+            "settings": {
+              "heading": "2020",
+              "tab_image_width": 1000,
+              "hide_image": false,
+              "row_content": "<p>After launching in 2015, we spent years growing our team, refining our products, and connecting with our first community of customers.</p>",
+              "button_label": "",
+              "button_link": "",
+              "button_style_secondary": false
+            }
+          },
+          "tab_3": {
+            "type": "tab",
+            "settings": {
+              "heading": "Year",
+              "tab_image_width": 1000,
+              "hide_image": false,
+              "row_content": "<p>With a solid foundation in place, 2023 marked a year of growth — we expanded into new markets, launched fresh collections, and strengthened our brand presence globally.</p>",
+              "button_label": "",
+              "button_link": "",
+              "button_style_secondary": false
+            }
+          },
+          "tab_4": {
+            "type": "tab",
+            "settings": {
+              "heading": "2025",
+              "tab_image_width": 1000,
+              "hide_image": false,
+              "row_content": "<p>This year is all about innovation and connection — we're embracing new ideas, deepening our customer relationships, and shaping the future of our brand with purpose.</p>",
+              "button_label": "",
+              "button_link": "",
+              "button_style_secondary": false
+            }
+          }
+        },
+        "block_order": [
+          "tab_1",
+          "tab_2",
+          "tab_3",
+          "tab_4"
+        ],
+        "settings": {
+          "tabs_style": "style-2",
+          "full_width": false,
+          "color_scheme": "option-2",
+          "color_scheme_1": "",
+          "padding_top": 36,
+          "padding_bottom": 36,
+          "ignore_spacing": false,
+          "margin_spacing": "negative",
+          "margin_top": 0
+        }
+      },
+      "multicolumn": {
+        "type": "multicolumn",
+        "blocks": {
+          "column_1": {
+            "type": "column",
+            "settings": {
+              "hide_image": false,
+              "title": "Emma Thompson",
+              "text": "<p>Emma is a talented designer, specializing in creating stylish and functional kids' products. With a passion for detail and user-friendly design, she ensures every piece blends beauty and practicality. Outside of work, Emma enjoys reading, exploring design trends, and spending time with her family.</p>",
+              "link_label": "",
+              "link": ""
+            }
+          },
+          "column_2": {
+            "type": "column",
+            "settings": {
+              "image": "",
+              "hide_image": false,
+              "title": "Daniela Martinez",
+              "text": "<p>Daniela is a creative force, focusing on product development and customer experience. With a passion for innovation and quality, she ensures that every product meets the highest standards. In her free time, Daniela loves experimenting with new ideas, traveling, and spending time with loved ones.</p>",
+              "link_label": "",
+              "link": ""
+            }
+          },
+          "column_3": {
+            "type": "column",
+            "settings": {
+              "image": "",
+              "hide_image": false,
+              "title": "Lily Brooks",
+              "text": "<p>Lily is a key member of tour team, dedicated to marketing and brand strategy. With her creativity and strong understanding of customer needs, she helps bring our vision to life. Outside of work, Lily enjoys photography, exploring new places, and practicing yoga.</p>",
+              "link_label": "",
+              "link": ""
+            }
+          }
+        },
+        "block_order": [
+          "column_1",
+          "column_2",
+          "column_3"
+        ],
+        "settings": {
+          "multicolumn_style": "style-two",
+          "enable_card_background": false,
+          "caption": "",
+          "text_style": "caption-with-letter-spacing",
+          "text_size": "medium",
+          "title": "Meet our Team",
+          "heading_size": "large",
+          "heading_style": "default",
+          "heading_tag": "h2",
+          "image_width": "full",
+          "image_ratio": "square",
+          "columns_desktop": 3,
+          "column_alignment": "left",
+          "button_label": "",
+          "button_link": "",
+          "color_scheme": "option-1",
+          "color_scheme_1": "option-2",
+          "padding_top": 36,
+          "padding_bottom": 36,
+          "ignore_spacing": true,
+          "margin_spacing": "negative",
+          "margin_top": 0,
+          "columns_mobile": "1",
+          "swipe_on_mobile": true,
+          "disable_arrow_mobile": true
+        }
+      }
+    },
+    "order": [
+      "main",
+      "video_background",
+      "tabs",
+      "multicolumn"
+    ]
+}

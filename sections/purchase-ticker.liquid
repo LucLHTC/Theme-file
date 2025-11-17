@@ -1,0 +1,648 @@
+{% comment %}
+  Purchase Ticker Section - My Little Bambino
+  Custom section voor volledige breedte social proof ticker
+  Kan toegevoegd worden via Theme Editor tussen Header en Product Information
+{% endcomment %}
+
+{%- liquid
+  assign bestsellers = collections['bestsellers']
+  if bestsellers == blank
+    assign bestsellers = collections['Bestsellers']
+  endif
+  
+  assign products_json = ''
+  
+  for product in bestsellers.products limit: 30
+    if product.featured_image
+      assign img_url = product.featured_image | image_url: width: 100
+      assign clean_title = product.title | replace: '"', "'" | replace: "\n", " " | strip | truncate: 50
+      assign product_url = product.url
+      if forloop.first
+        assign products_json = '{"name":"' | append: clean_title | append: '","image":"' | append: img_url | append: '","url":"' | append: product_url | append: '"}'
+      else
+        assign products_json = products_json | append: ',{"name":"' | append: clean_title | append: '","image":"' | append: img_url | append: '","url":"' | append: product_url | append: '"}'
+      endif
+    endif
+  endfor
+-%}
+
+<style>
+  .mlb-ticker-section {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+
+  .mlb-social-ticker {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(135deg, {{ section.settings.background_color }} 0%, {{ section.settings.background_color_end }} 100%);
+    overflow: hidden;
+    border-bottom: 1px solid rgba(139, 115, 85, 0.15);
+    z-index: 98;
+  }
+
+  .mlb-ticker-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 13px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 56px;
+  }
+
+  .mlb-ticker-icon {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    color: {{ section.settings.icon_color }};
+    opacity: 0.85;
+  }
+
+  .mlb-ticker-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .mlb-ticker-content.show {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .mlb-ticker-content.hide {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  .mlb-ticker-image {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.09);
+    border: 1px solid rgba(139, 115, 85, 0.12);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .mlb-ticker-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+    border-color: rgba(139, 115, 85, 0.25);
+  }
+
+  .mlb-ticker-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .mlb-ticker-message {
+    flex: 1;
+    font-family: var(--font-body-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui);
+    font-size: 15px;
+    line-height: 1.5;
+    color: {{ section.settings.text_color }};
+    font-weight: 500;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: baseline;
+  }
+
+  .mlb-ticker-customer {
+    font-weight: 600;
+    color: {{ section.settings.customer_color }};
+    white-space: nowrap;
+  }
+
+  .mlb-ticker-action {
+    color: {{ section.settings.action_color }};
+    white-space: nowrap;
+  }
+
+  .mlb-ticker-product {
+    color: {{ section.settings.product_color }};
+    font-weight: 600;
+    max-width: 340px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .mlb-ticker-product:hover {
+    color: {{ section.settings.product_hover_color }};
+    text-decoration: underline;
+  }
+
+  .mlb-ticker-time {
+    color: {{ section.settings.time_color }};
+    font-weight: 400;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  {% if section.settings.show_verified_badge %}
+  .mlb-ticker-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(40, 167, 69, 0.12);
+    color: #28a745;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    flex-shrink: 0;
+  }
+
+  .mlb-ticker-verified svg {
+    width: 13px;
+    height: 13px;
+  }
+  {% else %}
+  .mlb-ticker-verified {
+    display: none;
+  }
+  {% endif %}
+
+  @media screen and (max-width: 990px) {
+    .mlb-ticker-container {
+      padding: 12px 20px;
+      gap: 14px;
+      min-height: 52px;
+    }
+
+    .mlb-ticker-image {
+      width: 46px;
+      height: 46px;
+    }
+
+    .mlb-ticker-message {
+      font-size: 14px;
+    }
+
+    .mlb-ticker-product {
+      max-width: 220px;
+    }
+
+    .mlb-ticker-time {
+      flex-basis: 100%;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .mlb-ticker-container {
+      padding: 11px 16px;
+      gap: 12px;
+      min-height: 50px;
+    }
+
+    .mlb-ticker-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .mlb-ticker-image {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+    }
+
+    .mlb-ticker-message {
+      font-size: 13px;
+      gap: 5px;
+    }
+
+    .mlb-ticker-customer {
+      flex-shrink: 0;
+    }
+
+    .mlb-ticker-action {
+      flex-shrink: 0;
+    }
+
+    .mlb-ticker-product {
+      max-width: 150px;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+
+    .mlb-ticker-time {
+      font-size: 12px;
+      flex-basis: 100%;
+      margin-top: -2px;
+    }
+
+    .mlb-ticker-verified {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .mlb-ticker-container {
+      padding: 10px 14px;
+      gap: 10px;
+    }
+
+    .mlb-ticker-icon {
+      display: none;
+    }
+
+    .mlb-ticker-image {
+      width: 38px;
+      height: 38px;
+    }
+
+    .mlb-ticker-message {
+      font-size: 12px;
+      gap: 4px;
+    }
+
+    .mlb-ticker-product {
+      max-width: 120px;
+    }
+  }
+</style>
+
+<div class="mlb-ticker-section">
+  <div class="mlb-social-ticker">
+    <div class="mlb-ticker-container">
+      {% if section.settings.show_icon %}
+      <div class="mlb-ticker-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      </div>
+      {% endif %}
+      <div class="mlb-ticker-content" id="mlb-ticker-content" data-product-url="">
+        <div class="mlb-ticker-image">
+          <img src="" alt="" loading="lazy">
+        </div>
+        <div class="mlb-ticker-message">
+          <span class="mlb-ticker-customer"></span>
+          <span class="mlb-ticker-action"></span>
+          <span class="mlb-ticker-product"></span>
+          <span class="mlb-ticker-time"></span>
+        </div>
+        <span class="mlb-ticker-verified">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          {{ section.settings.verified_text }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const dutchNames = [
+    'Emma', 'Noah', 'Sophie', 'Lucas', 'Julia', 'Luca', 'Anna', 'Sem', 'Tess', 'Daan',
+    'Lisa', 'Milan', 'Sara', 'Luuk', 'Eva', 'Finn', 'Mila', 'Levi', 'Zoey', 'Max',
+    'Nora', 'Bram', 'Fenna', 'Lars', 'Liv', 'Thijs', 'Nina', 'Jayden', 'Evi', 'Sven',
+    'Lotte', 'Tim', 'Lynn', 'Jesse', 'Floor', 'Thomas', 'Isa', 'Ruben', 'Amy', 'Fleur'
+  ];
+
+  const cities = [
+    // Grote steden Nederland
+    'uit Amsterdam', 'uit Rotterdam', 'uit Utrecht', 'uit Den Haag', 'uit Eindhoven',
+    'uit Groningen', 'uit Tilburg', 'uit Almere', 'uit Breda', 'uit Nijmegen',
+    'uit Apeldoorn', 'uit Haarlem', 'uit Enschede', 'uit Arnhem', 'uit Zaandam',
+    'uit Amersfoort', 'uit Maastricht', 'uit Leiden', 'uit Dordrecht', 'uit Zwolle',
+    // Extra Nederland
+    'uit Asten', 'uit Beek', 'uit Bilthoven', 'uit Blaricum', 'uit Boxmeer',
+    'uit Boekel', 'uit Borne', 'uit Brummen', 'uit Bunschoten', 'uit Burgh',
+    'uit Dalfsen', 'uit Diemen', 'uit Didam', 'uit Dongen', 'uit Driebergen',
+    'uit Dronten', 'uit Echt', 'uit Eemnes', 'uit Elst', 'uit Ermelo',
+    'uit Gendt', 'uit Gennep', 'uit Goes', 'uit Groesbeek', 'uit Haaksbergen',
+    'uit Heerde', 'uit Heeze', 'uit Heiloo', 'uit Hillegom', 'uit Huizen',
+    'uit Kerkrade', 'uit Lemmer', 'uit Lisse', 'uit Lochem', 'uit Loosdrecht',
+    'uit Maasbracht', 'uit Maassluis', 'uit Meppel', 'uit Mierlo', 'uit Mill',
+    'uit Naaldwijk', 'uit Naarden', 'uit Nieuwkoop', 'uit Nuenen', 'uit Oegstgeest',
+    'uit Oirschot', 'uit Oosterbeek', 'uit Raalte', 'uit Rhenen', 'uit Rijssen',
+    'uit Rijpwetering', 'uit Sassenheim', 'uit Schijndel', 'uit Soest', 'uit Steenbergen',
+    'uit Tegelen', 'uit Twello', 'uit Uden', 'uit Valkenswaard', 'uit Veenendaal',
+    'uit Venray', 'uit Vianen', 'uit Voorschoten', 'uit Waddinxveen', 'uit Weesp',
+    'uit Wemeldinge', 'uit Wierden', 'uit Wijchen', 'uit Woerden', 'uit Woudenberg',
+    'uit Zaltbommel', 'uit Zevenbergen', 'uit Zevenhuizen',
+    // België
+    'uit Aartselaar', 'uit Arendonk', 'uit Balen', 'uit Berlaar', 'uit Boechout',
+    'uit Bonheiden', 'uit Borgloon', 'uit Bree', 'uit Damme', 'uit Deinze',
+    'uit Dessel', 'uit Duffel', 'uit Edegem', 'uit Erpe', 'uit Geel',
+    'uit Gistel', 'uit Halen', 'uit Heist', 'uit Herzele', 'uit Houthalen',
+    'uit Kapellen', 'uit Kontich', 'uit Lede', 'uit Liedekerke', 'uit Lokeren',
+    'uit Lommel', 'uit Londerzeel', 'uit Lo-Reninge', 'uit Maldegem', 'uit Malle',
+    'uit Maaseik', 'uit Mol', 'uit Nazareth', 'uit Neerpelt', 'uit Ninove',
+    'uit Olen', 'uit Oosterzele', 'uit Opwijk', 'uit Peer', 'uit Putte',
+    'uit Rumst', 'uit Sint-Gillis', 'uit Sint-Truiden', 'uit Tervuren', 'uit Tongeren',
+    'uit Tremelo', 'uit Waregem', 'uit Wellen', 'uit Wemmel', 'uit Wervik',
+    'uit Zemst', 'uit Zottegem', 'uit Zwevegem'
+  ];
+
+  const lastInitials = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'V', 'W', 'Z'];
+
+  let products = [];
+  
+  try {
+    const productsRaw = `{{ products_json }}`;
+    if (productsRaw && productsRaw.length > 10) {
+      products = JSON.parse('[' + productsRaw + ']');
+    }
+  } catch(e) {
+    console.warn('MLB Ticker: Fout bij laden producten');
+  }
+
+  if (products.length === 0) {
+    const tickerSection = document.querySelector('.mlb-ticker-section');
+    if (tickerSection) tickerSection.style.display = 'none';
+    return;
+  }
+
+  const actions = ['kocht', 'koos', 'bestelde'];
+
+  function generateRealisticTime() {
+    const now = new Date();
+    const currentHour = now.getHours();
+    
+    // Nacht (00:00 - 06:00): Toon bestellingen van 5-10 uur geleden
+    if (currentHour >= 0 && currentHour < 6) {
+      const hours = 5 + Math.floor(Math.random() * 6); // 5-10 uur geleden
+      return `${hours} uur geleden`;
+    }
+    
+    // Vroege ochtend (06:00 - 09:00): Mix van paar uur geleden en wat langer
+    if (currentHour >= 6 && currentHour < 9) {
+      const rand = Math.random();
+      if (rand < 0.5) {
+        // 50% kans: 2-4 uur geleden
+        const hours = 2 + Math.floor(Math.random() * 3);
+        return `${hours} uur geleden`;
+      } else {
+        // 50% kans: 6-10 uur geleden (van gisteren avond)
+        const hours = 6 + Math.floor(Math.random() * 5);
+        return `${hours} uur geleden`;
+      }
+    }
+    
+    // Normale uren (09:00 - 23:59): Reguliere tijden
+    const rand = Math.random();
+    
+    if (rand < 0.35) {
+      // 35% kans: 5-30 minuten geleden
+      const mins = 5 + Math.floor(Math.random() * 26);
+      return `${mins} minuten geleden`;
+    } else if (rand < 0.65) {
+      // 30% kans: 30-90 minuten geleden
+      const mins = 30 + Math.floor(Math.random() * 61);
+      if (mins >= 60) {
+        const hours = Math.floor(mins / 60);
+        const remainingMins = mins % 60;
+        if (remainingMins === 0) {
+          return `${hours} uur geleden`;
+        }
+        return `${hours} uur en ${remainingMins} min geleden`;
+      }
+      return `${mins} minuten geleden`;
+    } else if (rand < 0.85) {
+      // 20% kans: 2-4 uur geleden
+      const hours = 2 + Math.floor(Math.random() * 3);
+      return `${hours} uur geleden`;
+    } else {
+      // 15% kans: specifieke tijd vandaag (als het na 12:00 is)
+      if (currentHour >= 12) {
+        const timeOptions = [
+          'vanochtend om 10:30',
+          'vanochtend om 11:15',
+          'vanmiddag om 13:45',
+          'vanmiddag om 14:20',
+          'eerder vandaag'
+        ];
+        return timeOptions[Math.floor(Math.random() * timeOptions.length)];
+      } else {
+        // Voor 12:00: gebruik uren geleden
+        const hours = 2 + Math.floor(Math.random() * 3);
+        return `${hours} uur geleden`;
+      }
+    }
+  }
+
+  function getRandomItem(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function generatePurchase() {
+    const product = getRandomItem(products);
+    const firstName = getRandomItem(dutchNames);
+    const lastInitial = getRandomItem(lastInitials);
+    const city = getRandomItem(cities);
+    const action = getRandomItem(actions);
+    const time = generateRealisticTime();
+    
+    return {
+      customer: `${firstName} ${lastInitial}. ${city}`,
+      action: action,
+      product: product.name,
+      time: time,
+      image: product.image,
+      url: product.url
+    };
+  }
+
+  function updateTicker() {
+    const content = document.getElementById('mlb-ticker-content');
+    if (!content) return;
+
+    content.classList.remove('show');
+    content.classList.add('hide');
+
+    setTimeout(() => {
+      const purchase = generatePurchase();
+      
+      const img = content.querySelector('.mlb-ticker-image img');
+      const imgWrapper = content.querySelector('.mlb-ticker-image');
+      const customer = content.querySelector('.mlb-ticker-customer');
+      const action = content.querySelector('.mlb-ticker-action');
+      const productEl = content.querySelector('.mlb-ticker-product');
+      const time = content.querySelector('.mlb-ticker-time');
+      
+      img.src = purchase.image;
+      img.alt = purchase.product;
+      customer.textContent = purchase.customer;
+      action.textContent = purchase.action;
+      productEl.textContent = purchase.product;
+      time.textContent = purchase.time;
+      
+      // Store product URL for click handlers
+      content.setAttribute('data-product-url', purchase.url);
+
+      content.classList.remove('hide');
+      content.classList.add('show');
+    }, 600);
+  }
+
+  // Add click handlers for image and product name
+  function setupClickHandlers() {
+    const content = document.getElementById('mlb-ticker-content');
+    if (!content) return;
+
+    const imgWrapper = content.querySelector('.mlb-ticker-image');
+    const productEl = content.querySelector('.mlb-ticker-product');
+
+    // Click handler for image
+    imgWrapper.addEventListener('click', function() {
+      const url = content.getAttribute('data-product-url');
+      if (url) {
+        window.location.href = url;
+      }
+    });
+
+    // Click handler for product name
+    productEl.addEventListener('click', function() {
+      const url = content.getAttribute('data-product-url');
+      if (url) {
+        window.location.href = url;
+      }
+    });
+  }
+
+  setTimeout(() => {
+    updateTicker();
+    setupClickHandlers();
+  }, 400);
+
+  function scheduleNext() {
+    const delay = {{ section.settings.update_interval | times: 1000 }};
+    setTimeout(() => {
+      updateTicker();
+      scheduleNext();
+    }, delay);
+  }
+
+  setTimeout(scheduleNext, {{ section.settings.update_interval | times: 1000 }});
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Purchase Ticker",
+  "tag": "section",
+  "class": "section-purchase-ticker",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Algemene Instellingen"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Toon winkelwagen icoon",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_verified_badge",
+      "label": "Toon geverifieerd badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "verified_text",
+      "label": "Geverifieerd badge tekst",
+      "default": "Geverifieerd"
+    },
+    {
+      "type": "range",
+      "id": "update_interval",
+      "min": 5,
+      "max": 20,
+      "step": 1,
+      "unit": "sec",
+      "label": "Update interval",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Kleuren"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Achtergrondkleur (start)",
+      "default": "#FDF6EA"
+    },
+    {
+      "type": "color",
+      "id": "background_color_end",
+      "label": "Achtergrondkleur (eind)",
+      "default": "#FAF3E8"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icoon kleur",
+      "default": "#8B7355"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Tekst kleur",
+      "default": "#2b2b2b"
+    },
+    {
+      "type": "color",
+      "id": "customer_color",
+      "label": "Klant naam kleur",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "action_color",
+      "label": "Actie tekst kleur",
+      "default": "#4a4a4a"
+    },
+    {
+      "type": "color",
+      "id": "product_color",
+      "label": "Product naam kleur",
+      "default": "#8B7355"
+    },
+    {
+      "type": "color",
+      "id": "product_hover_color",
+      "label": "Product naam hover kleur",
+      "default": "#6B5335"
+    },
+    {
+      "type": "color",
+      "id": "time_color",
+      "label": "Tijd kleur",
+      "default": "#888888"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Purchase Ticker"
+    }
+  ]
+}
+{% endschema %}
