@@ -1,0 +1,262 @@
+{% comment %}
+  Before/After Image Slider
+  Interactive comparison slider
+{% endcomment %}
+
+<section class="before-after section--lg">
+  <div class="container">
+    {% if section.settings.heading != blank %}
+      <h2 class="text-center mb-4">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    {% if section.settings.subheading != blank %}
+      <p class="text-center mb-4" style="font-size: 1.125rem; color: #666; max-width: 600px; margin-left: auto; margin-right: auto;">
+        {{ section.settings.subheading }}
+      </p>
+    {% endif %}
+
+    <div class="before-after__slider-container">
+      <div class="before-after__slider">
+        <div class="before-after__image before-after__image--before">
+          {% if section.settings.before_image != blank %}
+            <img
+              src="{{ section.settings.before_image | image_url: width: 1200 }}"
+              alt="Before using ShedAway"
+              loading="lazy"
+            >
+          {% else %}
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+          <span class="before-after__label before-after__label--before">Before</span>
+        </div>
+
+        <div class="before-after__image before-after__image--after">
+          {% if section.settings.after_image != blank %}
+            <img
+              src="{{ section.settings.after_image | image_url: width: 1200 }}"
+              alt="After using ShedAway"
+              loading="lazy"
+            >
+          {% else %}
+            {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+          <span class="before-after__label before-after__label--after">After</span>
+        </div>
+
+        <div class="before-after__divider" id="before-after-divider">
+          <div class="before-after__handle">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" fill="currentColor"/>
+              <path d="M8.59 16.59L4 12l4.59-4.59L10 6l-6 6 6 6-1.41 1.41z" fill="currentColor"/>
+            </svg>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8.59 7.41L13.17 12l-4.58 4.59L10 18l6-6-6-6-1.41 1.41z" fill="currentColor"/>
+              <path d="M15.41 7.41L20 12l-4.59 4.59L14 18l6-6-6-6 1.41 1.41z" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .before-after {
+    background: white;
+  }
+
+  .before-after__slider-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .before-after__slider {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    aspect-ratio: 16 / 9;
+    cursor: ew-resize;
+    user-select: none;
+  }
+
+  .before-after__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .before-after__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .before-after__image--after {
+    clip-path: inset(0 50% 0 0);
+    transition: clip-path 0.1s ease;
+  }
+
+  .before-after__label {
+    position: absolute;
+    top: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+  }
+
+  .before-after__label--before {
+    left: 1rem;
+  }
+
+  .before-after__label--after {
+    right: 1rem;
+  }
+
+  .before-after__divider {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 4px;
+    height: 100%;
+    background: white;
+    transform: translateX(-50%);
+    transition: left 0.1s ease;
+    pointer-events: none;
+  }
+
+  .before-after__handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    pointer-events: all;
+    cursor: ew-resize;
+  }
+
+  .before-after__handle svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--color-dark);
+  }
+
+  @media (max-width: 768px) {
+    .before-after__slider {
+      aspect-ratio: 4 / 3;
+    }
+
+    .before-after__handle {
+      width: 50px;
+      height: 50px;
+    }
+
+    .before-after__handle svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const slider = document.querySelector('.before-after__slider');
+    const afterImage = document.querySelector('.before-after__image--after');
+    const divider = document.getElementById('before-after-divider');
+
+    if (!slider || !afterImage || !divider) return;
+
+    let isActive = false;
+
+    function updateSlider(clientX) {
+      const rect = slider.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+
+      afterImage.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
+      divider.style.left = `${percentage}%`;
+    }
+
+    // Mouse events
+    slider.addEventListener('mousedown', (e) => {
+      isActive = true;
+      updateSlider(e.clientX);
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isActive) return;
+      updateSlider(e.clientX);
+    });
+
+    document.addEventListener('mouseup', () => {
+      isActive = false;
+    });
+
+    // Touch events
+    slider.addEventListener('touchstart', (e) => {
+      isActive = true;
+      updateSlider(e.touches[0].clientX);
+    });
+
+    slider.addEventListener('touchmove', (e) => {
+      if (!isActive) return;
+      e.preventDefault();
+      updateSlider(e.touches[0].clientX);
+    });
+
+    slider.addEventListener('touchend', () => {
+      isActive = false;
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Before/After Slider",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "See the Difference"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Real results from real customers. Slide to see the transformation."
+    },
+    {
+      "type": "image_picker",
+      "id": "before_image",
+      "label": "Before Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "after_image",
+      "label": "After Image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Before/After Slider"
+    }
+  ]
+}
+{% endschema %}

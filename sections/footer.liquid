@@ -1,0 +1,274 @@
+{% comment %}
+  Footer Section
+{% endcomment %}
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__main">
+      <div class="footer__brand">
+        <h3 class="footer__logo">ShedAway</h3>
+        <p class="footer__tagline">{{ section.settings.tagline }}</p>
+      </div>
+
+      {% if section.settings.show_menu_1 %}
+        <div class="footer__menu">
+          <h4 class="footer__menu-title">{{ section.settings.menu_1_title }}</h4>
+          <ul class="footer__menu-list">
+            {% for link in linklists[section.settings.menu_1].links %}
+              <li>
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {% if section.settings.show_menu_2 %}
+        <div class="footer__menu">
+          <h4 class="footer__menu-title">{{ section.settings.menu_2_title }}</h4>
+          <ul class="footer__menu-list">
+            {% for link in linklists[section.settings.menu_2].links %}
+              <li>
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <div class="footer__contact">
+        <h4 class="footer__menu-title">Contact</h4>
+        {% if section.settings.email != blank %}
+          <p><a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a></p>
+        {% endif %}
+        {% if section.settings.phone != blank %}
+          <p><a href="tel:{{ section.settings.phone }}">{{ section.settings.phone }}</a></p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <div class="footer__payment">
+        <p class="footer__secure-text">Secure Payment</p>
+        <div class="footer__payment-icons">
+          <span class="payment-icon">💳</span>
+          <span class="payment-icon">🔒</span>
+        </div>
+      </div>
+
+      <p class="footer__copyright">
+        © {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.
+      </p>
+
+      {% if section.settings.show_policy_links %}
+        <div class="footer__policies">
+          {% for link in linklists.footer.links %}
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--color-dark);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 3rem 0 1.5rem;
+  }
+
+  .footer__main {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 2rem;
+  }
+
+  .footer__logo {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 0.75rem;
+  }
+
+  .footer__tagline {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .footer__menu-title {
+    font-size: 1.125rem;
+    color: white;
+    margin-bottom: 1rem;
+  }
+
+  .footer__menu-list {
+    list-style: none;
+  }
+
+  .footer__menu-list li {
+    margin-bottom: 0.75rem;
+  }
+
+  .footer__menu-list a,
+  .footer__contact a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    transition: color 0.2s ease;
+  }
+
+  .footer__menu-list a:hover,
+  .footer__contact a:hover {
+    color: white;
+  }
+
+  .footer__contact p {
+    margin-bottom: 0.5rem;
+  }
+
+  .footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .footer__payment {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .footer__secure-text {
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .footer__payment-icons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .payment-icon {
+    font-size: 1.5rem;
+  }
+
+  .footer__copyright {
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .footer__policies {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .footer__policies a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.2s ease;
+  }
+
+  .footer__policies a:hover {
+    color: white;
+  }
+
+  @media (max-width: 968px) {
+    .footer__main {
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .footer__brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .footer__main {
+      grid-template-columns: 1fr;
+    }
+
+    .footer__bottom {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .footer__policies {
+      justify-content: center;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Say goodbye to pet hair, forever. The electrostatic glove that works like magic."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_menu_1",
+      "label": "Show Menu 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "menu_1_title",
+      "label": "Menu 1 Title",
+      "default": "Quick Links"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_1",
+      "label": "Menu 1",
+      "default": "footer"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_menu_2",
+      "label": "Show Menu 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "menu_2_title",
+      "label": "Menu 2 Title",
+      "default": "Support"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_2",
+      "label": "Menu 2"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_policy_links",
+      "label": "Show Policy Links",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

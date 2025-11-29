@@ -1,0 +1,183 @@
+{% comment %}
+  Benefits Grid - Key product benefits with icons
+{% endcomment %}
+
+<section class="benefits section--lg">
+  <div class="container">
+    {% if section.settings.heading != blank %}
+      <h2 class="text-center mb-4">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="benefits__grid grid grid--4">
+      {% for block in section.blocks %}
+        {% if block.type == 'benefit' %}
+          <div class="benefit-card">
+            <div class="benefit-card__icon-wrapper">
+              {% if block.settings.icon == 'electrostatic' %}
+                <svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7 2v11h3v9l7-12h-4l4-8z" fill="currentColor"/>
+                </svg>
+              {% elsif block.settings.icon == 'gentle' %}
+                <svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                </svg>
+              {% elsif block.settings.icon == 'reusable' %}
+                <svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z" fill="currentColor"/>
+                </svg>
+              {% elsif block.settings.icon == 'versatile' %}
+                <svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" fill="currentColor"/>
+                </svg>
+              {% else %}
+                <svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+                </svg>
+              {% endif %}
+            </div>
+            <h3 class="benefit-card__title">{{ block.settings.title }}</h3>
+            <p class="benefit-card__description">{{ block.settings.description }}</p>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .benefits {
+    background: white;
+  }
+
+  .benefit-card {
+    text-align: center;
+  }
+
+  .benefit-card__icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, var(--color-primary) 0%, #E8E3D8 100%);
+    border-radius: 50%;
+  }
+
+  .benefit-card__icon-wrapper .icon {
+    fill: var(--color-secondary);
+  }
+
+  .benefit-card__title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .benefit-card__description {
+    font-size: 0.9375rem;
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Benefits",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Why Choose ShedAway?"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            {
+              "value": "electrostatic",
+              "label": "Electrostatic"
+            },
+            {
+              "value": "gentle",
+              "label": "Gentle/Heart"
+            },
+            {
+              "value": "reusable",
+              "label": "Reusable"
+            },
+            {
+              "value": "versatile",
+              "label": "Versatile"
+            },
+            {
+              "value": "checkmark",
+              "label": "Checkmark"
+            }
+          ],
+          "default": "electrostatic"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Electrostatic Technology"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Advanced electrostatic design attracts and captures pet hair like a magnet."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Benefits",
+      "blocks": [
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "electrostatic",
+            "title": "Electrostatic Technology",
+            "description": "Advanced design attracts pet hair like a magnet"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "gentle",
+            "title": "Gentle on Pets",
+            "description": "Soft material that your pets will love"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "reusable",
+            "title": "Eco-Friendly & Reusable",
+            "description": "Never buy lint rollers again - save money and the planet"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "versatile",
+            "title": "Works Everywhere",
+            "description": "Perfect for furniture, clothes, car seats, and more"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,52 @@
+{%- comment -%}
+  Structured data for SEO (JSON-LD)
+{%- endcomment -%}
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": {{ shop.name | json }},
+  "url": {{ request.origin | append: page.url | json }},
+  {% if shop.description != blank %}
+    "description": {{ shop.description | json }},
+  {% endif %}
+  "logo": {
+    "@type": "ImageObject",
+    "url": {{ 'logo.png' | asset_url | json }}
+  }
+}
+</script>
+
+{%- if template.name == 'product' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Product",
+    "name": {{ product.title | json }},
+    "url": {{ request.origin | append: product.url | json }},
+    {% if product.featured_image %}
+      "image": {{ product.featured_image | image_url: width: 1024 | prepend: "https:" | json }},
+    {% endif %}
+    "description": {{ product.description | strip_html | json }},
+    {% if product.selected_or_first_available_variant.sku != blank %}
+      "sku": {{ product.selected_or_first_available_variant.sku | json }},
+    {% endif %}
+    "brand": {
+      "@type": "Brand",
+      "name": {{ shop.name | json }}
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": {{ request.origin | append: product.url | json }},
+      "priceCurrency": {{ cart.currency.iso_code | json }},
+      "price": {{ product.selected_or_first_available_variant.price | divided_by: 100.00 | json }},
+      "availability": "http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
+      "seller": {
+        "@type": "Organization",
+        "name": {{ shop.name | json }}
+      }
+    }
+  }
+  </script>
+{%- endif -%}

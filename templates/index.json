@@ -1,0 +1,168 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "heading": "Say Goodbye to Pet Hair, Forever",
+        "subheading": "The electrostatic pet hair removal glove that works like magic. Gentle on your pets, tough on shedding.",
+        "button_text": "Get ShedAway Now",
+        "button_link": "/products/shedaway-glove"
+      }
+    },
+    "problem_agitation": {
+      "type": "problem-agitation",
+      "settings": {
+        "problem_title": "The Endless Battle",
+        "problem_description": "Tired of pet hair on your clothes, furniture, and floors?",
+        "problem_1": "Lint rollers that run out constantly",
+        "problem_2": "Expensive vacuum filters that clog",
+        "problem_3": "Hours spent cleaning every week",
+        "solution_title": "The Smart Solution",
+        "solution_description": "ShedAway makes pet hair removal effortless and sustainable.",
+        "solution_1": "Reusable - never buy lint rollers again",
+        "solution_2": "Works on all surfaces instantly",
+        "solution_3": "Gentle on pets, tough on hair"
+      }
+    },
+    "product_showcase": {
+      "type": "product-showcase",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "title": "Put on the Glove",
+            "description": "Slip on the ShedAway glove and get ready for effortless cleaning."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "title": "Glide Over Surfaces",
+            "description": "Gently stroke your pet or wipe surfaces. Watch hair stick like magic!"
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "title": "Peel Away Hair",
+            "description": "Simply peel off the collected hair and rinse. Ready to use again!"
+          }
+        }
+      },
+      "block_order": ["step_1", "step_2", "step_3"],
+      "settings": {
+        "heading": "How It Works",
+        "subheading": "Three simple steps to a hair-free home"
+      }
+    },
+    "benefits": {
+      "type": "benefits",
+      "blocks": {
+        "benefit_1": {
+          "type": "benefit",
+          "settings": {
+            "icon": "electrostatic",
+            "title": "Electrostatic Technology",
+            "description": "Advanced design attracts pet hair like a magnet - no batteries or power needed."
+          }
+        },
+        "benefit_2": {
+          "type": "benefit",
+          "settings": {
+            "icon": "gentle",
+            "title": "Gentle on Pets",
+            "description": "Soft, flexible material that pets actually enjoy. Turn grooming into bonding time."
+          }
+        },
+        "benefit_3": {
+          "type": "benefit",
+          "settings": {
+            "icon": "reusable",
+            "title": "Eco-Friendly & Reusable",
+            "description": "Never buy lint rollers again. Save money and reduce waste."
+          }
+        },
+        "benefit_4": {
+          "type": "benefit",
+          "settings": {
+            "icon": "versatile",
+            "title": "Works Everywhere",
+            "description": "Perfect for furniture, clothes, car seats, bedding, and more."
+          }
+        }
+      },
+      "block_order": ["benefit_1", "benefit_2", "benefit_3", "benefit_4"],
+      "settings": {
+        "heading": "Why Choose ShedAway?"
+      }
+    },
+    "reviews": {
+      "type": "reviews",
+      "blocks": {
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "This glove is amazing! My couch finally stays clean and my cat loves being groomed with it.",
+            "author_name": "Sarah M.",
+            "author_location": "Amsterdam, NL"
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "Best purchase ever! Works exactly as advertised. I bought 3 more for my family.",
+            "author_name": "Peter K.",
+            "author_location": "Rotterdam, NL"
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "My dog sheds like crazy and this is the only thing that actually works. Worth every cent!",
+            "author_name": "Lisa V.",
+            "author_location": "Utrecht, NL"
+          }
+        }
+      },
+      "block_order": ["review_1", "review_2", "review_3"],
+      "settings": {
+        "heading": "Loved by Pet Owners Everywhere"
+      }
+    },
+    "guarantee": {
+      "type": "guarantee",
+      "settings": {
+        "heading": "Risk-Free Purchase",
+        "description": "Try ShedAway risk-free for 30 days. If you're not completely satisfied, we'll refund your purchase - no questions asked."
+      }
+    },
+    "final_cta": {
+      "type": "final-cta",
+      "settings": {
+        "urgency_text": "⚡ Limited Stock Available",
+        "heading": "Get Your ShedAway Glove Today",
+        "description": "Join thousands of happy pet owners who've said goodbye to pet hair for good.",
+        "show_pricing": true,
+        "price_1pc": "€14.95",
+        "price_2pc": "€24.95",
+        "save_2pc": "€4.95",
+        "price_3pc": "€34.95",
+        "save_3pc": "€9.90",
+        "button_text": "Shop Now",
+        "button_link": "/products/shedaway-glove"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "problem_agitation",
+    "product_showcase",
+    "benefits",
+    "reviews",
+    "guarantee",
+    "final_cta"
+  ]
+}

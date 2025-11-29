@@ -1,0 +1,19 @@
+{
+  "current": {
+    "color_primary": "#F5F1EA",
+    "color_secondary": "#2D5016",
+    "color_accent": "#C9764C",
+    "color_dark": "#2B2B2B",
+    "color_background": "#FFFFFF",
+    "font_size_base": 16,
+    "hero_animation_enabled": true,
+    "hero_animation_duration": 2.5,
+    "hero_particle_count": 40,
+    "hero_show_skip": true,
+    "product_shipping_text": "Free Shipping",
+    "product_guarantee_text": "30-Day Money Back Guarantee",
+    "free_shipping_threshold": 0,
+    "cart_ajax_enabled": true,
+    "cart_show_upsell": true
+  }
+}

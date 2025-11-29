@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {%- endif -%}
+
+  <title>
+    {{ page_title }}
+    {%- if current_tags %} &ndash; {{ 'general.meta.tags' | t: tags: current_tags | escape }}{%- endif -%}
+    {%- if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{%- endif -%}
+    {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{%- endunless -%}
+  </title>
+
+  {% render 'meta-tags' %}
+  {% render 'structured-data' %}
+
+  <style>
+    :root {
+      --color-primary: {{ settings.color_primary }};
+      --color-secondary: {{ settings.color_secondary }};
+      --color-accent: {{ settings.color_accent }};
+      --color-dark: {{ settings.color_dark }};
+      --color-background: {{ settings.color_background }};
+      --font-size-base: {{ settings.font_size_base }}px;
+      --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
+      --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+    }
+
+    {{ settings.font_heading | font_face: font_display: 'swap' }}
+    {{ settings.font_body | font_face: font_display: 'swap' }}
+  </style>
+
+  {{ content_for_header }}
+
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+  <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+
+  {%- if settings.hero_animation_enabled and template.name == 'index' -%}
+    <script src="{{ 'hero-animation.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
+</head>
+
+<body class="template-{{ template.name }}">
+  <a class="skip-to-content-link" href="#MainContent">
+    Skip to content
+  </a>
+
+  {% section 'header' %}
+
+  {%- if settings.hero_animation_enabled and template.name == 'index' -%}
+    <div id="hero-animation-overlay" class="hero-animation-overlay">
+      <canvas id="hero-animation-canvas"></canvas>
+      {%- if settings.hero_show_skip -%}
+        <button id="hero-skip-btn" class="hero-skip-btn">Skip</button>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <main id="MainContent" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {% section 'footer' %}
+
+  {% render 'cart-drawer' %}
+
+  <script>
+    window.ShedAway = {
+      routes: {
+        cart_add_url: '{{ routes.cart_add_url }}',
+        cart_change_url: '{{ routes.cart_change_url }}',
+        cart_update_url: '{{ routes.cart_update_url }}',
+        cart_url: '{{ routes.cart_url }}'
+      },
+      settings: {
+        moneyFormat: '{{ shop.money_format }}',
+        cartAjaxEnabled: {{ settings.cart_ajax_enabled }},
+        freeShippingThreshold: {{ settings.free_shipping_threshold }}
+      },
+      cart: {{ cart | json }}
+    };
+  </script>
+</body>
+</html>

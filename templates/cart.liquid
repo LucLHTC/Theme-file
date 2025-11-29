@@ -1,0 +1,283 @@
+{% comment %}
+  Cart Page Template
+{% endcomment %}
+
+<div class="cart-page section">
+  <div class="container container--narrow">
+    <h1 class="text-center mb-4">Shopping Cart</h1>
+
+    {% if cart.item_count == 0 %}
+      <div class="cart-empty-state">
+        <svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" fill="currentColor"/>
+        </svg>
+        <h2>Your cart is empty</h2>
+        <p>Add some items to get started!</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary mt-3">Continue Shopping</a>
+      </div>
+    {% else %}
+      <form action="{{ routes.cart_url }}" method="post" class="cart-form">
+        <div class="cart-items">
+          {% for item in cart.items %}
+            <div class="cart-page-item">
+              <div class="cart-page-item__image">
+                {% if item.image %}
+                  <img src="{{ item.image | image_url: width: 150 }}" alt="{{ item.title }}">
+                {% endif %}
+              </div>
+
+              <div class="cart-page-item__details">
+                <h3 class="cart-page-item__title">
+                  <a href="{{ item.url }}">{{ item.product.title }}</a>
+                </h3>
+                {% if item.variant.title != 'Default Title' %}
+                  <p class="cart-page-item__variant">{{ item.variant.title }}</p>
+                {% endif %}
+                <p class="cart-page-item__price">{{ item.final_line_price | money }}</p>
+              </div>
+
+              <div class="cart-page-item__quantity">
+                <div class="quantity-selector">
+                  <button type="button" class="quantity-btn" onclick="updateCartItemQuantity({{ forloop.index }}, -1)">-</button>
+                  <input
+                    type="number"
+                    name="updates[]"
+                    id="updates_{{ item.key }}"
+                    value="{{ item.quantity }}"
+                    min="0"
+                    class="quantity-value"
+                    data-line="{{ forloop.index }}"
+                  >
+                  <button type="button" class="quantity-btn" onclick="updateCartItemQuantity({{ forloop.index }}, 1)">+</button>
+                </div>
+              </div>
+
+              <div class="cart-page-item__remove">
+                <button
+                  type="button"
+                  class="remove-btn"
+                  onclick="removeCartItem({{ forloop.index }})"
+                  aria-label="Remove item"
+                >
+                  <svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="cart-summary">
+          <div class="cart-summary__row">
+            <span>Subtotal:</span>
+            <span class="cart-summary__amount">{{ cart.total_price | money }}</span>
+          </div>
+
+          {% if settings.free_shipping_threshold > 0 %}
+            <div class="cart-summary__shipping">
+              <div class="shipping-progress-bar">
+                <div class="shipping-progress-fill" style="width: {% if cart.total_price >= settings.free_shipping_threshold %}100{% else %}{{ cart.total_price | times: 100 | divided_by: settings.free_shipping_threshold }}{% endif %}%"></div>
+              </div>
+              <p class="shipping-progress-text">
+                {% if cart.total_price >= settings.free_shipping_threshold %}
+                  🎉 You qualify for free shipping!
+                {% else %}
+                  Add {{ settings.free_shipping_threshold | minus: cart.total_price | money }} for free shipping
+                {% endif %}
+              </p>
+            </div>
+          {% endif %}
+
+          <p class="cart-summary__note">Shipping & taxes calculated at checkout</p>
+
+          <button type="submit" name="checkout" class="btn btn--primary btn--lg btn--full">
+            Proceed to Checkout
+          </button>
+
+          <a href="{{ routes.all_products_collection_url }}" class="btn btn--outline btn--full mt-2">
+            Continue Shopping
+          </a>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .cart-page {
+    margin-top: 80px;
+    min-height: 60vh;
+  }
+
+  .cart-empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  .cart-empty-state .icon {
+    fill: #CCC;
+    margin: 0 auto 2rem;
+  }
+
+  .cart-empty-state h2 {
+    margin-bottom: 1rem;
+  }
+
+  .cart-empty-state p {
+    color: #666;
+    font-size: 1.125rem;
+  }
+
+  .cart-form {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+    align-items: flex-start;
+  }
+
+  .cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .cart-page-item {
+    display: grid;
+    grid-template-columns: 100px 1fr auto auto;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1.5rem;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+  }
+
+  .cart-page-item__image {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--color-primary);
+  }
+
+  .cart-page-item__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cart-page-item__title a {
+    color: var(--color-dark);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.125rem;
+  }
+
+  .cart-page-item__title a:hover {
+    color: var(--color-secondary);
+  }
+
+  .cart-page-item__variant {
+    font-size: 0.9375rem;
+    color: #666;
+    margin: 0.5rem 0;
+  }
+
+  .cart-page-item__price {
+    font-weight: 700;
+    color: var(--color-secondary);
+    font-size: 1.125rem;
+    margin: 0;
+  }
+
+  .remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: #999;
+    transition: color 0.2s ease;
+  }
+
+  .remove-btn:hover {
+    color: #EF4444;
+  }
+
+  .cart-summary {
+    position: sticky;
+    top: 100px;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+
+  .cart-summary__row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  .cart-summary__amount {
+    color: var(--color-secondary);
+  }
+
+  .cart-summary__shipping {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .cart-summary__note {
+    font-size: 0.875rem;
+    color: #666;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 968px) {
+    .cart-form {
+      grid-template-columns: 1fr;
+    }
+
+    .cart-page-item {
+      grid-template-columns: 80px 1fr;
+      gap: 1rem;
+    }
+
+    .cart-page-item__quantity {
+      grid-column: 1 / -1;
+    }
+
+    .cart-page-item__remove {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+
+    .cart-summary {
+      position: static;
+    }
+  }
+</style>
+
+<script>
+  function updateCartItemQuantity(line, change) {
+    const input = document.querySelector(`input[data-line="${line}"]`);
+    const newValue = parseInt(input.value) + change;
+
+    if (newValue >= 0) {
+      input.value = newValue;
+      input.closest('form').submit();
+    }
+  }
+
+  function removeCartItem(line) {
+    const input = document.querySelector(`input[data-line="${line}"]`);
+    input.value = 0;
+    input.closest('form').submit();
+  }
+</script>

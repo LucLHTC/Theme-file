@@ -1,0 +1,287 @@
+{% comment %}
+  Final CTA Section - Last conversion push with urgency
+{% endcomment %}
+
+<section class="final-cta section--lg">
+  <div class="container container--narrow">
+    <div class="final-cta__content">
+      {% if section.settings.urgency_text != blank %}
+        <div class="final-cta__urgency">
+          <svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" fill="currentColor"/>
+          </svg>
+          <span>{{ section.settings.urgency_text }}</span>
+        </div>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2 class="final-cta__heading text-center">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      {% if section.settings.description != blank %}
+        <p class="final-cta__description text-center">{{ section.settings.description }}</p>
+      {% endif %}
+
+      {% if section.settings.show_pricing %}
+        <div class="final-cta__pricing">
+          <div class="pricing-option">
+            <div class="pricing-option__header">
+              <span class="pricing-option__title">1 Piece</span>
+            </div>
+            <div class="pricing-option__price">{{ section.settings.price_1pc }}</div>
+          </div>
+
+          <div class="pricing-option pricing-option--popular">
+            <div class="pricing-option__badge">Most Popular</div>
+            <div class="pricing-option__header">
+              <span class="pricing-option__title">2 Pieces</span>
+              <span class="pricing-option__save">Save {{ section.settings.save_2pc }}</span>
+            </div>
+            <div class="pricing-option__price">{{ section.settings.price_2pc }}</div>
+          </div>
+
+          <div class="pricing-option">
+            <div class="pricing-option__header">
+              <span class="pricing-option__title">3 Pieces</span>
+              <span class="pricing-option__save">Save {{ section.settings.save_3pc }}</span>
+            </div>
+            <div class="pricing-option__price">{{ section.settings.price_3pc }}</div>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if section.settings.button_text != blank %}
+        <div class="final-cta__button">
+          <a href="{{ section.settings.button_link }}" class="btn btn--primary btn--lg">
+            {{ section.settings.button_text }}
+          </a>
+        </div>
+      {% endif %}
+
+      <div class="final-cta__reassurance">
+        {% render 'trust-badges' %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .final-cta {
+    background: linear-gradient(135deg, var(--color-secondary) 0%, #1F3D0E 100%);
+    color: white;
+  }
+
+  .final-cta__content {
+    text-align: center;
+  }
+
+  .final-cta__urgency {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    margin-bottom: 2rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .final-cta__urgency .icon {
+    fill: white;
+  }
+
+  .final-cta__heading {
+    color: white;
+    margin-bottom: 1rem;
+  }
+
+  .final-cta__description {
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    margin: 0 auto 3rem;
+  }
+
+  .final-cta__pricing {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .pricing-option {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .pricing-option:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-4px);
+  }
+
+  .pricing-option--popular {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+  }
+
+  .pricing-option--popular:hover {
+    transform: scale(1.05) translateY(-4px);
+  }
+
+  .pricing-option__badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-accent);
+    color: white;
+    padding: 0.375rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .pricing-option__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .pricing-option__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .pricing-option__save {
+    font-size: 0.875rem;
+    color: #4ADE80;
+    font-weight: 600;
+  }
+
+  .pricing-option__price {
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+  }
+
+  .final-cta__button {
+    margin-bottom: 2rem;
+  }
+
+  .final-cta__reassurance .trust-badges {
+    justify-content: center;
+  }
+
+  .final-cta__reassurance .trust-badge {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .final-cta__reassurance .trust-badge svg {
+    fill: white;
+  }
+
+  @media (max-width: 968px) {
+    .final-cta__pricing {
+      grid-template-columns: 1fr;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .pricing-option--popular {
+      transform: scale(1);
+    }
+
+    .pricing-option--popular:hover {
+      transform: translateY(-4px);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Final CTA",
+  "settings": [
+    {
+      "type": "text",
+      "id": "urgency_text",
+      "label": "Urgency Text",
+      "default": "⚡ Limited Stock Available"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Get Your ShedAway Glove Today"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Join thousands of happy pet owners who've said goodbye to pet hair for good."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pricing",
+      "label": "Show Pricing Options",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "price_1pc",
+      "label": "1 Piece Price",
+      "default": "€14.95"
+    },
+    {
+      "type": "text",
+      "id": "price_2pc",
+      "label": "2 Pieces Price",
+      "default": "€24.95"
+    },
+    {
+      "type": "text",
+      "id": "save_2pc",
+      "label": "2 Pieces Savings",
+      "default": "€4.95"
+    },
+    {
+      "type": "text",
+      "id": "price_3pc",
+      "label": "3 Pieces Price",
+      "default": "€34.95"
+    },
+    {
+      "type": "text",
+      "id": "save_3pc",
+      "label": "3 Pieces Savings",
+      "default": "€9.90"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Final CTA"
+    }
+  ]
+}
+{% endschema %}

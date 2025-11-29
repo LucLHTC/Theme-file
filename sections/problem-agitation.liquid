@@ -1,0 +1,259 @@
+{% comment %}
+  Problem Agitation Section - Show the problem and solution
+{% endcomment %}
+
+<section class="problem-section section">
+  <div class="container">
+    <div class="problem__grid">
+      <div class="problem__side problem__side--before">
+        <div class="problem__icon">
+          <span class="problem__emoji">😫</span>
+        </div>
+        <h3 class="problem__title">{{ section.settings.problem_title }}</h3>
+        <p class="problem__description">{{ section.settings.problem_description }}</p>
+
+        <ul class="problem__list">
+          {% if section.settings.problem_1 != blank %}
+            <li class="problem__item">
+              <svg class="icon icon--sm" style="fill: #EF4444;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+              </svg>
+              <span>{{ section.settings.problem_1 }}</span>
+            </li>
+          {% endif %}
+          {% if section.settings.problem_2 != blank %}
+            <li class="problem__item">
+              <svg class="icon icon--sm" style="fill: #EF4444;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+              </svg>
+              <span>{{ section.settings.problem_2 }}</span>
+            </li>
+          {% endif %}
+          {% if section.settings.problem_3 != blank %}
+            <li class="problem__item">
+              <svg class="icon icon--sm" style="fill: #EF4444;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+              </svg>
+              <span>{{ section.settings.problem_3 }}</span>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div class="problem__divider">
+        <div class="problem__arrow">→</div>
+      </div>
+
+      <div class="problem__side problem__side--after">
+        <div class="problem__icon">
+          <span class="problem__emoji">✨</span>
+        </div>
+        <h3 class="problem__title">{{ section.settings.solution_title }}</h3>
+        <p class="problem__description">{{ section.settings.solution_description }}</p>
+
+        <ul class="problem__list">
+          {% if section.settings.solution_1 != blank %}
+            <li class="problem__item">
+              <svg class="icon icon--sm" style="fill: #10B981;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+              </svg>
+              <span>{{ section.settings.solution_1 }}</span>
+            </li>
+          {% endif %}
+          {% if section.settings.solution_2 != blank %}
+            <li class="problem__item">
+              <svg class="icon icon--sm" style="fill: #10B981;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+              </svg>
+              <span>{{ section.settings.solution_2 }}</span>
+            </li>
+          {% endif %}
+          {% if section.settings.solution_3 != blank %}
+            <li class="problem__item">
+              <svg class="icon icon--sm" style="fill: #10B981;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+              </svg>
+              <span>{{ section.settings.solution_3 }}</span>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .problem-section {
+    background: white;
+  }
+
+  .problem__grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .problem__side {
+    padding: 2.5rem;
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .problem__side--before {
+    background: #FEF2F2;
+    border: 2px solid #FECACA;
+  }
+
+  .problem__side--after {
+    background: #F0FDF4;
+    border: 2px solid #BBF7D0;
+  }
+
+  .problem__emoji {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .problem__title {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .problem__description {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+
+  .problem__list {
+    list-style: none;
+    text-align: left;
+  }
+
+  .problem__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .problem__item svg {
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .problem__divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .problem__arrow {
+    font-size: 3rem;
+    color: var(--color-secondary);
+    font-weight: bold;
+  }
+
+  @media (max-width: 968px) {
+    .problem__grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .problem__divider {
+      display: none;
+    }
+
+    .problem__emoji {
+      font-size: 2.5rem;
+    }
+
+    .problem__title {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Problem Agitation",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Problem Side"
+    },
+    {
+      "type": "text",
+      "id": "problem_title",
+      "label": "Problem Title",
+      "default": "The Endless Battle"
+    },
+    {
+      "type": "textarea",
+      "id": "problem_description",
+      "label": "Problem Description",
+      "default": "Tired of pet hair on your clothes, furniture, and floors?"
+    },
+    {
+      "type": "text",
+      "id": "problem_1",
+      "label": "Problem Point 1",
+      "default": "Lint rollers that run out constantly"
+    },
+    {
+      "type": "text",
+      "id": "problem_2",
+      "label": "Problem Point 2",
+      "default": "Expensive vacuum filters that clog"
+    },
+    {
+      "type": "text",
+      "id": "problem_3",
+      "label": "Problem Point 3",
+      "default": "Hours spent cleaning every week"
+    },
+    {
+      "type": "header",
+      "content": "Solution Side"
+    },
+    {
+      "type": "text",
+      "id": "solution_title",
+      "label": "Solution Title",
+      "default": "The Smart Solution"
+    },
+    {
+      "type": "textarea",
+      "id": "solution_description",
+      "label": "Solution Description",
+      "default": "ShedAway makes pet hair removal effortless and sustainable."
+    },
+    {
+      "type": "text",
+      "id": "solution_1",
+      "label": "Solution Point 1",
+      "default": "Reusable - never buy lint rollers again"
+    },
+    {
+      "type": "text",
+      "id": "solution_2",
+      "label": "Solution Point 2",
+      "default": "Works on all surfaces instantly"
+    },
+    {
+      "type": "text",
+      "id": "solution_3",
+      "label": "Solution Point 3",
+      "default": "Gentle on pets, tough on hair"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Problem Agitation"
+    }
+  ]
+}
+{% endschema %}

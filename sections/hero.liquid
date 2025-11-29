@@ -1,0 +1,185 @@
+{% comment %}
+  Hero Section - Main landing section after animation
+{% endcomment %}
+
+<section class="hero section--lg">
+  <div class="container">
+    <div class="hero__grid">
+      <div class="hero__content">
+        {% if section.settings.heading != blank %}
+          <h1 class="hero__heading slide-up">
+            {{ section.settings.heading }}
+          </h1>
+        {% endif %}
+
+        {% if section.settings.subheading != blank %}
+          <p class="hero__subheading slide-up">
+            {{ section.settings.subheading }}
+          </p>
+        {% endif %}
+
+        {% if section.settings.button_text != blank %}
+          <div class="hero__cta slide-up">
+            <a href="{{ section.settings.button_link }}" class="btn btn--primary btn--lg">
+              {{ section.settings.button_text }}
+            </a>
+          </div>
+        {% endif %}
+
+        <div class="hero__trust-badges slide-up">
+          {% render 'trust-badges' %}
+        </div>
+      </div>
+
+      <div class="hero__image">
+        {% if section.settings.image != blank %}
+          <img
+            src="{{ section.settings.image | image_url: width: 800 }}"
+            alt="{{ section.settings.heading | escape }}"
+            width="800"
+            height="auto"
+            loading="eager"
+            class="slide-up"
+          >
+        {% else %}
+          <div class="placeholder-image">
+            {{ 'lifestyle' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    margin-top: 70px; /* Account for fixed header */
+    background: linear-gradient(135deg, var(--color-primary) 0%, #FFFFFF 100%);
+  }
+
+  .hero__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .hero__content {
+    animation-delay: 0.2s;
+  }
+
+  .hero__heading {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: var(--color-dark);
+  }
+
+  .hero__subheading {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 2rem;
+  }
+
+  .hero__cta {
+    margin-bottom: 2rem;
+  }
+
+  .hero__trust-badges {
+    animation-delay: 0.4s;
+  }
+
+  .hero__image {
+    position: relative;
+    animation-delay: 0.3s;
+  }
+
+  .hero__image img {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+
+  .placeholder-image {
+    aspect-ratio: 1 / 1;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .placeholder-svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  @media (max-width: 968px) {
+    .hero__grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .hero__image {
+      order: -1;
+    }
+
+    .hero__heading {
+      font-size: clamp(2rem, 8vw, 3rem);
+    }
+
+    .hero__subheading {
+      font-size: 1.125rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      margin-top: 60px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Say Goodbye to Pet Hair, Forever"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "The electrostatic pet hair removal glove that works like magic. Gentle on your pets, tough on shedding."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero Image"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Get ShedAway Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero"
+    }
+  ]
+}
+{% endschema %}

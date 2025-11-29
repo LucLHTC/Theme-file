@@ -1,0 +1,70 @@
+{% comment %}
+  Page Template - For general content pages
+{% endcomment %}
+
+<div class="page-template section">
+  <div class="container container--narrow">
+    <h1 class="page-title text-center">{{ page.title }}</h1>
+
+    <div class="page-content">
+      {{ page.content }}
+    </div>
+  </div>
+</div>
+
+<style>
+  .page-template {
+    margin-top: 80px;
+    min-height: 60vh;
+  }
+
+  .page-title {
+    margin-bottom: 2rem;
+  }
+
+  .page-content {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #444;
+  }
+
+  .page-content h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-content h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-content p {
+    margin-bottom: 1.25rem;
+  }
+
+  .page-content ul,
+  .page-content ol {
+    margin-bottom: 1.25rem;
+    padding-left: 2rem;
+  }
+
+  .page-content li {
+    margin-bottom: 0.5rem;
+  }
+
+  .page-content a {
+    color: var(--color-secondary);
+    text-decoration: underline;
+  }
+
+  .page-content a:hover {
+    color: var(--color-accent);
+  }
+
+  .page-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 2rem 0;
+  }
+</style>
