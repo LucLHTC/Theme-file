@@ -1,0 +1,412 @@
+{% comment %}
+  404 Error Page - Custom branded not found page
+{% endcomment %}
+
+<section class="error-404 section--xl">
+  <div class="container container--narrow">
+    <div class="error-404__content">
+      <!-- Animated 404 Icon -->
+      <div class="error-404__icon">
+        <svg viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 4 -->
+          <path d="M30 80V35L50 35L50 50L65 50L65 35L75 35L75 80L65 80L65 60L30 60L30 80Z" fill="var(--color-secondary)" opacity="0.2"/>
+          <!-- 0 (Glove shape) -->
+          <ellipse cx="100" cy="57.5" rx="20" ry="22.5" fill="var(--color-secondary)"/>
+          <circle cx="100" cy="57.5" r="12" fill="var(--color-primary)"/>
+          <!-- 4 -->
+          <path d="M125 80V35L145 35L145 50L160 50L160 35L170 35L170 80L160 80L160 60L125 60L125 80Z" fill="var(--color-secondary)" opacity="0.2"/>
+        </svg>
+
+        <!-- Pet hair floating animation -->
+        <div class="error-404__hair" aria-hidden="true">
+          <span class="hair-strand"></span>
+          <span class="hair-strand"></span>
+          <span class="hair-strand"></span>
+        </div>
+      </div>
+
+      {% if section.settings.heading != blank %}
+        <h1 class="error-404__heading">{{ section.settings.heading }}</h1>
+      {% endif %}
+
+      {% if section.settings.subheading != blank %}
+        <p class="error-404__subheading">{{ section.settings.subheading }}</p>
+      {% endif %}
+
+      {% if section.settings.message != blank %}
+        <p class="error-404__message">{{ section.settings.message }}</p>
+      {% endif %}
+
+      <!-- Navigation Options -->
+      <div class="error-404__actions">
+        <a href="{{ routes.root_url }}" class="btn btn--primary btn--lg">
+          <svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>
+          </svg>
+          Back to Homepage
+        </a>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--secondary btn--lg">
+          Shop All Products
+        </a>
+      </div>
+
+      {% if section.settings.show_search %}
+        <div class="error-404__search">
+          <p class="error-404__search-label">Or search for what you need:</p>
+          <form action="{{ routes.search_url }}" method="get" class="search-form" role="search">
+            <input
+              type="search"
+              name="q"
+              placeholder="Search for products..."
+              class="search-form__input"
+              aria-label="Search"
+              autocomplete="off"
+            >
+            <button type="submit" class="search-form__button btn btn--primary">
+              <svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/>
+              </svg>
+              Search
+            </button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if section.settings.show_products %}
+      <div class="error-404__products">
+        <h2 class="error-404__products-heading">You Might Be Looking For</h2>
+        <div class="error-404__products-grid">
+          {% assign collection = collections.all %}
+          {% for product in collection.products limit: 3 %}
+            <div class="product-card-404">
+              <a href="{{ product.url }}" class="product-card-404__link">
+                {% if product.featured_image %}
+                  <div class="product-card-404__image">
+                    <img
+                      src="{{ product.featured_image | image_url: width: 300 }}"
+                      alt="{{ product.featured_image.alt | escape }}"
+                      width="300"
+                      height="300"
+                      loading="lazy"
+                    >
+                  </div>
+                {% endif %}
+                <h3 class="product-card-404__title">{{ product.title }}</h3>
+                <p class="product-card-404__price">
+                  {{ product.price | money }}
+                </p>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .error-404 {
+    background: linear-gradient(180deg, var(--color-primary) 0%, white 100%);
+    min-height: 60vh;
+  }
+
+  .error-404__content {
+    text-align: center;
+    padding: 3rem 0;
+  }
+
+  .error-404__icon {
+    position: relative;
+    width: 200px;
+    height: 100px;
+    margin: 0 auto 2rem;
+  }
+
+  .error-404__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .error-404__hair {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .hair-strand {
+    position: absolute;
+    width: 2px;
+    height: 15px;
+    background: #8B7355;
+    border-radius: 2px;
+    opacity: 0.6;
+    animation: floatHair 3s infinite ease-in-out;
+  }
+
+  .hair-strand:nth-child(1) {
+    left: 20%;
+    top: 20%;
+    animation-delay: 0s;
+  }
+
+  .hair-strand:nth-child(2) {
+    left: 50%;
+    top: 30%;
+    animation-delay: 1s;
+  }
+
+  .hair-strand:nth-child(3) {
+    left: 80%;
+    top: 25%;
+    animation-delay: 2s;
+  }
+
+  @keyframes floatHair {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateY(30px) rotate(180deg);
+      opacity: 0.2;
+    }
+  }
+
+  .error-404__heading {
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--color-dark);
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .error-404__subheading {
+    font-size: 1.5rem;
+    color: var(--color-secondary);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .error-404__message {
+    font-size: 1.125rem;
+    color: #666;
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  .error-404__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .error-404__actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .error-404__search {
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .error-404__search-label {
+    font-size: 1rem;
+    color: var(--color-dark);
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+
+  .search-form {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .search-form__input {
+    flex: 1;
+    padding: 1rem 1.25rem;
+    border: 2px solid var(--color-secondary);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    transition: all 0.3s ease;
+  }
+
+  .search-form__input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(201, 118, 76, 0.1);
+  }
+
+  .search-form__button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    padding: 1rem 1.5rem;
+  }
+
+  .error-404__products {
+    margin-top: 4rem;
+    padding-top: 4rem;
+    border-top: 2px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .error-404__products-heading {
+    text-align: center;
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+    color: var(--color-dark);
+  }
+
+  .error-404__products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .product-card-404 {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .product-card-404:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .product-card-404__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .product-card-404__image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--color-primary);
+  }
+
+  .product-card-404__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .product-card-404:hover .product-card-404__image img {
+    transform: scale(1.05);
+  }
+
+  .product-card-404__title {
+    padding: 1rem 1rem 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-dark);
+  }
+
+  .product-card-404__price {
+    padding: 0 1rem 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .error-404__actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .error-404__actions .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .search-form {
+      flex-direction: column;
+    }
+
+    .search-form__button {
+      justify-content: center;
+    }
+
+    .error-404__products-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hair-strand {
+      animation: none;
+    }
+
+    .product-card-404:hover {
+      transform: none;
+    }
+
+    .product-card-404:hover .product-card-404__image img {
+      transform: none;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "404 Page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Page Not Found"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Looks like this page got swept away!"
+    },
+    {
+      "type": "textarea",
+      "id": "message",
+      "label": "Message",
+      "default": "The page you're looking for doesn't exist. But don't worry - we can help you find what you need."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show Search Bar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_products",
+      "label": "Show Product Recommendations",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "404 Page"
+    }
+  ]
+}
+{% endschema %}

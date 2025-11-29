@@ -16,7 +16,11 @@
     {% endif %}
 
     <div class="before-after__slider-container">
-      <div class="before-after__slider">
+      <div class="before-after__slider" tabindex="0" role="slider" aria-label="Before and after comparison slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+        <div class="before-after__hint">
+          <span class="hide-mobile">← Drag or use arrow keys →</span>
+          <span class="hide-desktop">← Swipe or tap →</span>
+        </div>
         <div class="before-after__image before-after__image--before">
           {% if section.settings.before_image != blank %}
             <img
@@ -78,6 +82,31 @@
     aspect-ratio: 16 / 9;
     cursor: ew-resize;
     user-select: none;
+    outline: none; /* Remove default focus outline, we'll add custom one */
+  }
+
+  .before-after__slider:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .before-after__hint {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .before-after__slider.has-interacted .before-after__hint {
+    opacity: 0;
   }
 
   .before-after__image {
@@ -183,14 +212,28 @@
     if (!slider || !afterImage || !divider) return;
 
     let isActive = false;
+    let currentPosition = 50; // Start at 50%
 
     function updateSlider(clientX) {
       const rect = slider.getBoundingClientRect();
       const x = clientX - rect.left;
       const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
 
+      currentPosition = percentage;
       afterImage.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
       divider.style.left = `${percentage}%`;
+      slider.setAttribute('aria-valuenow', Math.round(percentage));
+
+      // Mark as interacted to hide hint
+      slider.classList.add('has-interacted');
+    }
+
+    function updateSliderByPercentage(percentage) {
+      currentPosition = Math.max(0, Math.min(100, percentage));
+      afterImage.style.clipPath = `inset(0 ${100 - currentPosition}% 0 0)`;
+      divider.style.left = `${currentPosition}%`;
+      slider.setAttribute('aria-valuenow', Math.round(currentPosition));
+      slider.classList.add('has-interacted');
     }
 
     // Mouse events
@@ -222,6 +265,40 @@
 
     slider.addEventListener('touchend', () => {
       isActive = false;
+    });
+
+    // Keyboard navigation
+    slider.addEventListener('keydown', (e) => {
+      let newPosition = currentPosition;
+
+      switch(e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          newPosition = currentPosition - 5; // Move 5% left
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          newPosition = currentPosition + 5; // Move 5% right
+          break;
+        case 'Home':
+          e.preventDefault();
+          newPosition = 0; // Go to start
+          break;
+        case 'End':
+          e.preventDefault();
+          newPosition = 100; // Go to end
+          break;
+        default:
+          return;
+      }
+
+      updateSliderByPercentage(newPosition);
+    });
+
+    // Click anywhere on slider to jump to position
+    slider.addEventListener('click', (e) => {
+      if (e.target !== slider && !e.target.closest('.before-after__image')) return;
+      updateSlider(e.clientX);
     });
   })();
 </script>

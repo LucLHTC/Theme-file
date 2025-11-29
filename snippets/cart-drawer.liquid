@@ -25,10 +25,33 @@
 
   <div class="cart-drawer__items" data-cart-items>
     {% if cart.item_count == 0 %}
-      <p class="cart-empty">Your cart is empty</p>
+      <div class="cart-empty">
+        <svg class="cart-empty__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" fill="currentColor"/>
+        </svg>
+        <p class="cart-empty__text">Your cart is empty</p>
+        <p class="cart-empty__subtext">Add some products to get started!</p>
+        {% assign collection = collections.all %}
+        {% if collection.products.size > 0 %}
+          <div class="cart-empty__suggestions">
+            <p class="cart-empty__suggestions-title">You might like:</p>
+            <div class="cart-empty__products">
+              {% for product in collection.products limit: 2 %}
+                <a href="{{ product.url }}" class="cart-suggestion" onclick="closeCartDrawer()">
+                  {% if product.featured_image %}
+                    <img src="{{ product.featured_image | image_url: width: 150 }}" alt="{{ product.title }}" class="cart-suggestion__image">
+                  {% endif %}
+                  <p class="cart-suggestion__title">{{ product.title }}</p>
+                  <p class="cart-suggestion__price">{{ product.price | money }}</p>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
     {% else %}
       {% for item in cart.items %}
-        <div class="cart-item">
+        <div class="cart-item" data-cart-item data-line-key="{{ forloop.index }}">
           <div class="cart-item__image">
             {% if item.image %}
               <img src="{{ item.image | image_url: width: 120 }}" alt="{{ item.title }}">
@@ -39,9 +62,10 @@
             {% if item.variant.title != 'Default Title' %}
               <p class="cart-item__variant">{{ item.variant.title }}</p>
             {% endif %}
-            <p class="cart-item__price">{{ item.final_line_price | money }}</p>
+            <p class="cart-item__price" data-item-price>{{ item.final_line_price | money }}</p>
           </div>
           <div class="cart-item__quantity">
+            <button type="button" class="quantity-btn quantity-btn--minus" onclick="updateCartQuantity({{ forloop.index }}, {{ item.quantity }} - 1)" aria-label="Decrease quantity">−</button>
             <input
               type="number"
               value="{{ item.quantity }}"
@@ -49,8 +73,15 @@
               data-cart-quantity
               data-line-key="{{ forloop.index }}"
               class="quantity-input"
+              readonly
             >
+            <button type="button" class="quantity-btn quantity-btn--plus" onclick="updateCartQuantity({{ forloop.index }}, {{ item.quantity }} + 1)" aria-label="Increase quantity">+</button>
           </div>
+          <button type="button" class="cart-item__remove" onclick="removeCartItem({{ forloop.index }})" aria-label="Remove item">
+            <svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
+            </svg>
+          </button>
         </div>
       {% endfor %}
     {% endif %}
@@ -149,22 +180,128 @@
     padding: 1.5rem;
   }
 
+  /* Enhanced Empty State */
   .cart-empty {
     text-align: center;
-    padding: 3rem 1rem;
-    color: #666;
+    padding: 2rem 1rem;
   }
 
+  .cart-empty__icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1rem;
+    fill: #CCC;
+  }
+
+  .cart-empty__text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .cart-empty__subtext {
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+
+  .cart-empty__suggestions {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .cart-empty__suggestions-title {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 0.9375rem;
+  }
+
+  .cart-empty__products {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .cart-suggestion {
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+  }
+
+  .cart-suggestion:hover {
+    border-color: var(--color-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .cart-suggestion__image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+  }
+
+  .cart-suggestion__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+  }
+
+  .cart-suggestion__price {
+    font-weight: 700;
+    color: var(--color-secondary);
+    font-size: 0.9375rem;
+    margin: 0;
+  }
+
+  /* Cart Items with Animation */
   .cart-item {
     display: flex;
     gap: 1rem;
     padding-bottom: 1rem;
     margin-bottom: 1rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    position: relative;
+    transition: all 0.3s ease;
   }
 
   .cart-item:last-child {
     border-bottom: none;
+  }
+
+  .cart-item.removing {
+    animation: slideOut 0.3s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes slideOut {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  .cart-item.updating .cart-item__quantity {
+    animation: pulse 0.4s ease;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
   }
 
   .cart-item__image {
@@ -205,16 +342,70 @@
 
   .cart-item__quantity {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    gap: 0;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .quantity-btn {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border: none;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .quantity-btn:hover {
+    background: var(--color-primary);
+  }
+
+  .quantity-btn:active {
+    background: rgba(0, 0, 0, 0.1);
   }
 
   .quantity-input {
-    width: 60px;
-    padding: 0.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    width: 40px;
+    padding: 0.5rem 0.25rem;
+    border: none;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
     text-align: center;
     font-weight: 600;
+    font-size: 0.9375rem;
+    background: white;
+  }
+
+  .cart-item__remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+  }
+
+  .cart-item__remove:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+  }
+
+  .cart-item__remove .icon {
+    fill: #999;
+  }
+
+  .cart-item__remove:hover .icon {
+    fill: #d32f2f;
   }
 
   .cart-drawer__upsell {

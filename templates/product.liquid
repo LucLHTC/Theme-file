@@ -7,7 +7,7 @@
     <div class="product__grid">
       {%- comment -%} Product Images {%- endcomment -%}
       <div class="product__images">
-        <div class="product__main-image">
+        <div class="product__main-image product__main-image--zoomable" onclick="openLightbox(0)">
           {% if product.featured_image %}
             <img
               id="product-featured-image"
@@ -15,7 +15,15 @@
               alt="{{ product.featured_image.alt | escape }}"
               width="800"
               height="800"
+              class="product-image-zoom"
             >
+            <div class="zoom-hint">
+              <svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/>
+                <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z" fill="currentColor"/>
+              </svg>
+              Click to enlarge
+            </div>
           {% else %}
             {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
           {% endif %}
@@ -181,6 +189,34 @@
   </div>
 </div>
 
+{%- comment -%} Image Lightbox Modal {%- endcomment -%}
+<div id="product-lightbox" class="lightbox" onclick="closeLightboxOnBackground(event)">
+  <button class="lightbox__close" onclick="closeLightbox()" aria-label="Close lightbox">
+    <svg class="icon icon--md" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
+    </svg>
+  </button>
+
+  <button class="lightbox__nav lightbox__nav--prev" onclick="navigateLightbox(-1)" aria-label="Previous image">
+    <svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" fill="currentColor"/>
+    </svg>
+  </button>
+
+  <button class="lightbox__nav lightbox__nav--next" onclick="navigateLightbox(1)" aria-label="Next image">
+    <svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" fill="currentColor"/>
+    </svg>
+  </button>
+
+  <div class="lightbox__content">
+    <img id="lightbox-image" src="" alt="" class="lightbox__image">
+    <div class="lightbox__counter">
+      <span id="lightbox-current">1</span> / <span id="lightbox-total">{{ product.images.size }}</span>
+    </div>
+  </div>
+</div>
+
 {%- comment -%} Sticky Add to Cart Bar (Mobile) {%- endcomment -%}
 <div class="sticky-atc" id="sticky-atc">
   <div class="container">
@@ -216,12 +252,47 @@
     overflow: hidden;
     background: var(--color-primary);
     margin-bottom: 1rem;
+    position: relative;
+    cursor: pointer;
   }
 
   .product__main-image img {
     width: 100%;
     height: auto;
     display: block;
+    transition: transform 0.4s ease;
+  }
+
+  /* Image Zoom on Hover (Desktop only) */
+  @media (min-width: 969px) {
+    .product__main-image--zoomable:hover .product-image-zoom {
+      transform: scale(1.15);
+    }
+
+    .product__main-image:hover .zoom-hint {
+      opacity: 1;
+    }
+  }
+
+  .zoom-hint {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .zoom-hint .icon {
+    fill: white;
   }
 
   .product__thumbnails {
@@ -483,6 +554,114 @@
     color: var(--color-secondary);
   }
 
+  /* Lightbox Styles */
+  .lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .lightbox.active {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .lightbox__close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10001;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox__close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+  }
+
+  .lightbox__close .icon {
+    fill: white;
+  }
+
+  .lightbox__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10001;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox__nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .lightbox__nav .icon {
+    fill: white;
+  }
+
+  .lightbox__nav--prev {
+    left: 2rem;
+  }
+
+  .lightbox__nav--next {
+    right: 2rem;
+  }
+
+  .lightbox__content {
+    max-width: 90%;
+    max-height: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .lightbox__image {
+    max-width: 100%;
+    max-height: calc(90vh - 60px);
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .lightbox__counter {
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+  }
+
   @media (max-width: 968px) {
     .product__grid {
       grid-template-columns: 1fr;
@@ -496,10 +675,59 @@
     .product__title {
       font-size: 2rem;
     }
+
+    /* Lightbox mobile adjustments */
+    .lightbox__nav {
+      width: 44px;
+      height: 44px;
+    }
+
+    .lightbox__nav--prev {
+      left: 0.5rem;
+    }
+
+    .lightbox__nav--next {
+      right: 0.5rem;
+    }
+
+    .lightbox__close {
+      top: 1rem;
+      right: 1rem;
+      width: 44px;
+      height: 44px;
+    }
+
+    .zoom-hint {
+      display: none; /* Hide zoom hint on mobile */
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .product__main-image img,
+    .lightbox {
+      animation: none;
+      transition: none;
+    }
+
+    .product__main-image--zoomable:hover .product-image-zoom {
+      transform: none;
+    }
   }
 </style>
 
 <script>
+  // Product images array for lightbox
+  const productImages = [
+    {% for image in product.images %}
+      {
+        url: "{{ image | image_url: width: 1600 }}",
+        alt: "{{ image.alt | escape }}"
+      }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ];
+
+  let currentLightboxIndex = 0;
+
   // Update main image
   function updateMainImage(imageUrl) {
     document.getElementById('product-featured-image').src = imageUrl;
@@ -519,6 +747,65 @@
       input.value = newValue;
     }
   }
+
+  // Lightbox functions
+  function openLightbox(index) {
+    currentLightboxIndex = index;
+    const lightbox = document.getElementById('product-lightbox');
+    const lightboxImage = document.getElementById('lightbox-image');
+    const currentCounter = document.getElementById('lightbox-current');
+
+    lightboxImage.src = productImages[index].url;
+    lightboxImage.alt = productImages[index].alt;
+    currentCounter.textContent = index + 1;
+
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    const lightbox = document.getElementById('product-lightbox');
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function closeLightboxOnBackground(event) {
+    if (event.target.id === 'product-lightbox') {
+      closeLightbox();
+    }
+  }
+
+  function navigateLightbox(direction) {
+    currentLightboxIndex += direction;
+
+    // Loop around
+    if (currentLightboxIndex < 0) {
+      currentLightboxIndex = productImages.length - 1;
+    } else if (currentLightboxIndex >= productImages.length) {
+      currentLightboxIndex = 0;
+    }
+
+    const lightboxImage = document.getElementById('lightbox-image');
+    const currentCounter = document.getElementById('lightbox-current');
+
+    lightboxImage.src = productImages[currentLightboxIndex].url;
+    lightboxImage.alt = productImages[currentLightboxIndex].alt;
+    currentCounter.textContent = currentLightboxIndex + 1;
+  }
+
+  // Keyboard navigation for lightbox
+  document.addEventListener('keydown', (e) => {
+    const lightbox = document.getElementById('product-lightbox');
+    if (!lightbox.classList.contains('active')) return;
+
+    if (e.key === 'Escape') {
+      closeLightbox();
+    } else if (e.key === 'ArrowLeft') {
+      navigateLightbox(-1);
+    } else if (e.key === 'ArrowRight') {
+      navigateLightbox(1);
+    }
+  });
 
   // Update price on variant change
   document.querySelectorAll('.variant-input').forEach(input => {

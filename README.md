@@ -72,6 +72,23 @@ A custom, conversion-optimized Shopify theme built specifically for ShedAway, a 
 └── README.md
 ```
 
+## ⚠️ Important: Product Setup First
+
+**Before uploading the theme**, you should create your product in Shopify:
+
+1. Go to **Products > Add product**
+2. Create a product with the handle: `shedaway-glove`
+   - Product title: "ShedAway Pet Hair Removal Glove"
+   - Add product description
+   - Upload high-quality images (recommended: 2000x2000px)
+   - Add variants (see Product Page Setup section below)
+
+**Why?** The homepage buttons link to `/products/shedaway-glove`. If this product doesn't exist yet, the buttons will redirect to the "All Products" collection page as a fallback.
+
+**Alternative:** Upload the theme first, then update the button links in the theme customizer after creating your product.
+
+---
+
 ## 🚀 Installation
 
 ### Method 1: Upload as ZIP

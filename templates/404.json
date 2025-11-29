@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "main": {
+      "type": "404-main",
+      "settings": {
+        "heading": "Page Not Found",
+        "subheading": "Looks like this page got swept away!",
+        "message": "The page you're looking for doesn't exist. But don't worry - we can help you find what you need.",
+        "show_search": true,
+        "show_products": true
+      }
+    }
+  },
+  "order": ["main"]
+}

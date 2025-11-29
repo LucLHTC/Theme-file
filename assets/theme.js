@@ -12,6 +12,9 @@ class ShedAwayTheme {
     this.initCart();
     this.initHeader();
     this.initMobileMenu();
+    this.initScrollAnimations();
+    this.initLoadingStates();
+    this.initPerformance();
   }
 
   // Cart functionality
@@ -293,6 +296,142 @@ class ShedAwayTheme {
     }
   }
 
+  // Scroll Animations with Intersection Observer
+  initScrollAnimations() {
+    if (!('IntersectionObserver' in window)) return;
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -100px 0px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          // Stagger animation for grid items
+          if (entry.target.classList.contains('benefit-card') ||
+              entry.target.classList.contains('cart-suggestion')) {
+            const delay = parseInt(entry.target.dataset.index || 0) * 100;
+            setTimeout(() => {
+              entry.target.classList.add('animated');
+            }, delay);
+          } else {
+            entry.target.classList.add('animated');
+          }
+        }
+      });
+    }, observerOptions);
+
+    // Observe sections and cards
+    document.querySelectorAll('.hero, .benefits, .reviews, .guarantee, .final-cta').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Observe benefit cards with stagger
+    document.querySelectorAll('.benefit-card').forEach((card, index) => {
+      card.dataset.index = index;
+      card.classList.add('animate-on-scroll');
+      observer.observe(card);
+    });
+  }
+
+  // Loading States and Micro-interactions
+  initLoadingStates() {
+    // Add to cart button loading state
+    document.addEventListener('submit', (e) => {
+      if (e.target.id === 'product-form') {
+        const submitBtn = e.target.querySelector('[data-add-to-cart]');
+        if (submitBtn && !submitBtn.disabled) {
+          const originalText = submitBtn.textContent;
+          submitBtn.textContent = 'Adding...';
+          submitBtn.classList.add('btn--loading');
+
+          // Add spinner
+          const spinner = document.createElement('span');
+          spinner.className = 'btn-spinner';
+          submitBtn.prepend(spinner);
+        }
+      }
+    });
+
+    // Cart count badge animation
+    document.addEventListener('cart:updated', (e) => {
+      const cartCount = document.querySelector('[data-cart-count]');
+      if (cartCount) {
+        cartCount.classList.add('bounce');
+        setTimeout(() => cartCount.classList.remove('bounce'), 600);
+      }
+    });
+
+    // Quantity selector hover effects (already in CSS but adding focus states)
+    document.querySelectorAll('.quantity-btn').forEach(btn => {
+      btn.addEventListener('mousedown', function() {
+        this.style.transform = 'scale(0.95)';
+      });
+      btn.addEventListener('mouseup', function() {
+        this.style.transform = '';
+      });
+    });
+  }
+
+  // Performance Optimizations
+  initPerformance() {
+    // Lazy load images below the fold
+    if ('loading' in HTMLImageElement.prototype) {
+      // Browser supports native lazy loading
+      document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+        img.loading = 'lazy';
+      });
+    } else {
+      // Fallback for browsers that don't support lazy loading
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+              img.src = img.dataset.src;
+              img.removeAttribute('data-src');
+            }
+            observer.unobserve(img);
+          }
+        });
+      });
+
+      document.querySelectorAll('img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+      });
+    }
+
+    // Defer non-critical JavaScript
+    this.deferNonCriticalScripts();
+
+    // Preload critical assets
+    this.preloadCriticalAssets();
+  }
+
+  deferNonCriticalScripts() {
+    // This would be called for any analytics or non-critical scripts
+    // Example: Load external scripts after page load
+    window.addEventListener('load', () => {
+      // Add any deferred scripts here
+      console.log('Non-critical scripts loaded');
+    });
+  }
+
+  preloadCriticalAssets() {
+    // Preload hero image if it exists
+    const heroImage = document.querySelector('.hero__image img');
+    if (heroImage && heroImage.src) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = heroImage.src;
+      document.head.appendChild(link);
+    }
+  }
+
   // Utility: Format money
   formatMoney(cents) {
     const amount = (cents / 100).toFixed(2);
@@ -300,11 +439,100 @@ class ShedAwayTheme {
   }
 }
 
+// Global cart helper functions for inline onclick handlers
+window.updateCartQuantity = async function(lineKey, quantity) {
+  if (quantity < 0) return;
+
+  const cartItem = document.querySelector(`[data-line-key="${lineKey}"]`).closest('[data-cart-item]');
+  if (cartItem) {
+    cartItem.classList.add('updating');
+  }
+
+  try {
+    const response = await fetch(window.ShedAway.routes.cart_change_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        line: lineKey,
+        quantity: quantity
+      })
+    });
+
+    if (!response.ok) throw new Error('Failed to update cart');
+
+    const cart = await response.json();
+
+    // Update cart display
+    if (window.shedAwayTheme) {
+      window.shedAwayTheme.updateCart(cart);
+    }
+
+    // Remove updating class after animation
+    setTimeout(() => {
+      if (cartItem) {
+        cartItem.classList.remove('updating');
+      }
+    }, 400);
+  } catch (error) {
+    console.error('Error updating quantity:', error);
+    alert('Sorry, there was an error updating your cart.');
+    if (cartItem) {
+      cartItem.classList.remove('updating');
+    }
+  }
+};
+
+window.removeCartItem = async function(lineKey) {
+  const cartItem = document.querySelector(`[data-line-key="${lineKey}"]`).closest('[data-cart-item]');
+
+  if (cartItem) {
+    cartItem.classList.add('removing');
+  }
+
+  try {
+    const response = await fetch(window.ShedAway.routes.cart_change_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        line: lineKey,
+        quantity: 0
+      })
+    });
+
+    if (!response.ok) throw new Error('Failed to remove item');
+
+    const cart = await response.json();
+
+    // Wait for animation to complete
+    setTimeout(() => {
+      if (window.shedAwayTheme) {
+        window.shedAwayTheme.updateCart(cart);
+      }
+    }, 300);
+  } catch (error) {
+    console.error('Error removing item:', error);
+    alert('Sorry, there was an error removing the item.');
+    if (cartItem) {
+      cartItem.classList.remove('removing');
+    }
+  }
+};
+
+window.closeCartDrawer = function() {
+  if (window.shedAwayTheme) {
+    window.shedAwayTheme.closeCartDrawer();
+  }
+};
+
 // Initialize theme
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    new ShedAwayTheme();
+    window.shedAwayTheme = new ShedAwayTheme();
   });
 } else {
-  new ShedAwayTheme();
+  window.shedAwayTheme = new ShedAwayTheme();
 }
