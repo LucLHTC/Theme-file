@@ -1,5 +1,5 @@
 {% comment %}
-  Trust Badges Component
+  Trust Badges Component with Pulse Animations
 {% endcomment %}
 
 <div class="trust-badges">
@@ -10,7 +10,7 @@
     <span>{{ settings.product_shipping_text }}</span>
   </div>
 
-  <div class="trust-badge">
+  <div class="trust-badge trust-badge--highlight">
     <svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1ZM10 17L6 13L7.41 11.59L10 14.17L16.59 7.58L18 9L10 17Z" fill="currentColor"/>
     </svg>
@@ -24,3 +24,34 @@
     <span>Fast Delivery</span>
   </div>
 </div>
+
+<style>
+  .trust-badge {
+    transition: all 0.3s ease;
+  }
+
+  .trust-badge:hover {
+    transform: scale(1.05);
+  }
+
+  .trust-badge--highlight .icon {
+    animation: pulse-badge 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-badge {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.9;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .trust-badge--highlight .icon {
+      animation: none;
+    }
+  }
+</style>

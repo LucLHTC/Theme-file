@@ -1,0 +1,168 @@
+{% comment %}
+  Real-time Purchase Notifications (Social Proof)
+  Shows fake but realistic purchase notifications
+{% endcomment %}
+
+<div class="purchase-notification" id="purchase-notification" style="display: none;">
+  <div class="purchase-notification__content">
+    <div class="purchase-notification__icon">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+      </svg>
+    </div>
+    <div class="purchase-notification__text">
+      <strong id="notification-name"></strong> from <span id="notification-city"></span> bought <span id="notification-item"></span>
+      <div class="purchase-notification__time" id="notification-time"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .purchase-notification {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    z-index: 9998;
+    max-width: 360px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    transform: translateX(-120%);
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border-left: 4px solid var(--color-secondary);
+  }
+
+  .purchase-notification.show {
+    transform: translateX(0);
+  }
+
+  .purchase-notification__content {
+    display: flex;
+    gap: 1rem;
+    padding: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .purchase-notification__icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--color-secondary) 0%, #1F3D0E 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .purchase-notification__icon svg {
+    width: 20px;
+    height: 20px;
+    fill: white;
+  }
+
+  .purchase-notification__text {
+    flex: 1;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-dark);
+  }
+
+  .purchase-notification__text strong {
+    font-weight: 700;
+    color: var(--color-secondary);
+  }
+
+  .purchase-notification__time {
+    font-size: 0.8125rem;
+    color: #999;
+    margin-top: 0.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .purchase-notification {
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      max-width: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .purchase-notification {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const notification = document.getElementById('purchase-notification');
+    if (!notification) return;
+
+    const notifications = [
+      { name: "Emma", city: "Amsterdam", item: "2 gloves", time: "3 minutes ago" },
+      { name: "Lucas", city: "Rotterdam", item: "1 glove", time: "5 minutes ago" },
+      { name: "Sophie", city: "Utrecht", item: "3 gloves", time: "8 minutes ago" },
+      { name: "Daan", city: "Den Haag", item: "2 gloves", time: "12 minutes ago" },
+      { name: "Lotte", city: "Eindhoven", item: "1 glove", time: "15 minutes ago" },
+      { name: "Finn", city: "Groningen", item: "2 gloves", time: "18 minutes ago" },
+      { name: "Nora", city: "Tilburg", item: "3 gloves", time: "22 minutes ago" },
+      { name: "Sem", city: "Almere", item: "1 glove", time: "25 minutes ago" },
+      { name: "Mila", city: "Breda", item: "2 gloves", time: "28 minutes ago" },
+      { name: "Bram", city: "Nijmegen", item: "1 glove", time: "32 minutes ago" },
+      { name: "Julia", city: "Apeldoorn", item: "3 gloves", time: "35 minutes ago" },
+      { name: "Luuk", city: "Haarlem", item: "2 gloves", time: "40 minutes ago" },
+      { name: "Eva", city: "Arnhem", item: "1 glove", time: "45 minutes ago" },
+      { name: "Max", city: "Zaanstad", item: "2 gloves", time: "48 minutes ago" },
+      { name: "Zoë", city: "Haarlemmermeer", item: "1 glove", time: "52 minutes ago" },
+      { name: "Jesse", city: "Amersfoort", item: "3 gloves", time: "55 minutes ago" },
+      { name: "Lisa", city: "Hoofddorp", item: "2 gloves", time: "1 hour ago" },
+      { name: "Milan", city: "Maastricht", item: "1 glove", time: "1 hour ago" },
+      { name: "Anna", city: "Leiden", item: "2 gloves", time: "1 hour ago" },
+      { name: "Noah", city: "Dordrecht", item: "3 gloves", time: "1 hour ago" }
+    ];
+
+    let lastIndex = -1;
+
+    function showNotification() {
+      // Get random notification (different from last)
+      let index;
+      do {
+        index = Math.floor(Math.random() * notifications.length);
+      } while (index === lastIndex && notifications.length > 1);
+      lastIndex = index;
+
+      const data = notifications[index];
+
+      // Update content
+      document.getElementById('notification-name').textContent = data.name;
+      document.getElementById('notification-city').textContent = data.city;
+      document.getElementById('notification-item').textContent = data.item;
+      document.getElementById('notification-time').textContent = data.time;
+
+      // Show notification
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 100);
+
+      // Hide after 5 seconds
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+          notification.style.display = 'none';
+        }, 400);
+      }, 5000);
+    }
+
+    // Show first notification after 10 seconds
+    setTimeout(() => {
+      showNotification();
+
+      // Then show every 15-25 seconds
+      setInterval(() => {
+        showNotification();
+      }, (15 + Math.random() * 10) * 1000);
+    }, 10000);
+  })();
+</script>

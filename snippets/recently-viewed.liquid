@@ -1,0 +1,114 @@
+{% comment %}
+  Recently Viewed Products
+  Displays last 4 viewed products from localStorage
+{% endcomment %}
+
+<div class="recently-viewed" id="recently-viewed-container" style="display: none;">
+  <div class="container">
+    <h3 class="recently-viewed__heading">You Recently Viewed</h3>
+    <div class="recently-viewed__grid" id="recently-viewed-grid">
+      <!-- Products will be dynamically inserted here -->
+    </div>
+  </div>
+</div>
+
+<style>
+  .recently-viewed {
+    padding: 3rem 0;
+    background: var(--color-primary);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .recently-viewed__heading {
+    font-size: 1.75rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--color-dark);
+  }
+
+  .recently-viewed__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .recently-viewed-product {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .recently-viewed-product:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .recently-viewed-product__image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background: var(--color-primary);
+  }
+
+  .recently-viewed-product__info {
+    padding: 1rem;
+  }
+
+  .recently-viewed-product__title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .recently-viewed-product__price {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .recently-viewed__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const container = document.getElementById('recently-viewed-container');
+    const grid = document.getElementById('recently-viewed-grid');
+
+    if (!container || !grid) return;
+
+    // Get recently viewed from localStorage
+    const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+
+    // Only show if there are products (excluding current page)
+    if (recentlyViewed.length > 1) {
+      // Render products
+      grid.innerHTML = recentlyViewed.slice(0, 4).map(product => `
+        <a href="${product.url}" class="recently-viewed-product">
+          <img src="${product.image}" alt="${product.title}" class="recently-viewed-product__image" loading="lazy">
+          <div class="recently-viewed-product__info">
+            <h4 class="recently-viewed-product__title">${product.title}</h4>
+            <p class="recently-viewed-product__price">${product.price}</p>
+          </div>
+        </a>
+      `).join('');
+
+      container.style.display = 'block';
+    }
+  })();
+</script>

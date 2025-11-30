@@ -14,6 +14,10 @@
     "product_guarantee_text": "30-Day Money Back Guarantee",
     "free_shipping_threshold": 0,
     "cart_ajax_enabled": true,
-    "cart_show_upsell": true
+    "cart_show_upsell": true,
+    "enable_purchase_notifications": true,
+    "enable_viewing_counter": true,
+    "stock_urgency_threshold": 10,
+    "enable_recently_viewed": true
   }
 }

@@ -136,6 +136,27 @@
             {% endif %}
           </button>
 
+          {%- comment -%} Stock Urgency Indicator {%- endcomment -%}
+          {% if product.selected_or_first_available_variant.inventory_quantity > 0 and product.selected_or_first_available_variant.inventory_quantity <= 10 %}
+            <div class="stock-urgency" data-stock-urgency>
+              {% if product.selected_or_first_available_variant.inventory_quantity < 5 %}
+                <span class="stock-urgency__icon">🔥</span>
+                <span class="stock-urgency__text">Almost gone! Only <strong>{{ product.selected_or_first_available_variant.inventory_quantity }}</strong> left in stock!</span>
+              {% else %}
+                <span class="stock-urgency__icon">⚠️</span>
+                <span class="stock-urgency__text">Only <strong>{{ product.selected_or_first_available_variant.inventory_quantity }}</strong> left in stock!</span>
+              {% endif %}
+            </div>
+          {% endif %}
+
+          {%- comment -%} People Viewing Counter {%- endcomment -%}
+          <div class="viewing-counter" id="viewing-counter" style="display: none;">
+            <svg class="viewing-counter__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor"/>
+            </svg>
+            <span class="viewing-counter__text"><strong id="viewing-count">0</strong> people are viewing this</span>
+          </div>
+
           <div class="product__trust">
             {% render 'trust-badges' %}
           </div>
@@ -188,6 +209,9 @@
     </div>
   </div>
 </div>
+
+{%- comment -%} Recently Viewed Products {%- endcomment -%}
+{% render 'recently-viewed' %}
 
 {%- comment -%} Image Lightbox Modal {%- endcomment -%}
 <div id="product-lightbox" class="lightbox" onclick="closeLightboxOnBackground(event)">
@@ -458,6 +482,81 @@
     margin-top: 1.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  /* Stock Urgency Indicator */
+  .stock-urgency {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+    border: 2px solid #FF6F00;
+    border-radius: 8px;
+    margin-top: 1rem;
+    animation: pulse-urgency 2s ease-in-out infinite;
+  }
+
+  .stock-urgency[data-stock-urgency] {
+    background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+    border-color: #D32F2F;
+  }
+
+  .stock-urgency__icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .stock-urgency__text {
+    font-size: 0.9375rem;
+    color: var(--color-dark);
+    font-weight: 500;
+  }
+
+  .stock-urgency__text strong {
+    font-weight: 700;
+    color: #D32F2F;
+  }
+
+  @keyframes pulse-urgency {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 2px 8px rgba(211, 47, 47, 0.2);
+    }
+    50% {
+      transform: scale(1.02);
+      box-shadow: 0 4px 16px rgba(211, 47, 47, 0.3);
+    }
+  }
+
+  /* People Viewing Counter */
+  .viewing-counter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: rgba(45, 80, 22, 0.05);
+    border: 1px solid rgba(45, 80, 22, 0.2);
+    border-radius: 6px;
+    margin-top: 0.75rem;
+    transition: opacity 0.3s ease;
+  }
+
+  .viewing-counter__icon {
+    width: 20px;
+    height: 20px;
+    fill: var(--color-secondary);
+    flex-shrink: 0;
+  }
+
+  .viewing-counter__text {
+    font-size: 0.875rem;
+    color: #555;
+  }
+
+  .viewing-counter__text strong {
+    color: var(--color-secondary);
+    font-weight: 700;
   }
 
   .product__accordion {
@@ -807,16 +906,90 @@
     }
   });
 
-  // Update price on variant change
+  // Variant image map (configure in Shopify by tagging images with variant titles)
+  const variantImageMap = {
+    {% for variant in product.variants %}
+      '{{ variant.id }}': '{{ variant.featured_image | image_url: width: 800 }}'{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  };
+
+  // Update price and image on variant change
   document.querySelectorAll('.variant-input').forEach(input => {
     input.addEventListener('change', function() {
       const price = this.dataset.price;
       const comparePrice = this.dataset.comparePrice;
+      const variantId = this.value;
 
       // Update price display
       document.getElementById('product-price').textContent = formatMoney(price);
       document.getElementById('sticky-price').textContent = formatMoney(price);
+
+      // Update main image if variant has associated image
+      if (variantImageMap[variantId] && variantImageMap[variantId] !== 'null') {
+        const mainImage = document.getElementById('product-featured-image');
+        mainImage.style.opacity = '0';
+
+        setTimeout(() => {
+          mainImage.src = variantImageMap[variantId];
+          mainImage.style.opacity = '1';
+        }, 150);
+      }
     });
+  });
+
+  // People Viewing Counter
+  function initViewingCounter() {
+    const counter = document.getElementById('viewing-counter');
+    const countEl = document.getElementById('viewing-count');
+
+    if (!counter || !countEl) return;
+
+    // Generate random initial count (3-8)
+    let viewingCount = Math.floor(Math.random() * 6) + 3;
+    countEl.textContent = viewingCount;
+    counter.style.display = 'flex';
+
+    // Update count every 20-30 seconds
+    setInterval(() => {
+      const change = Math.random() > 0.5 ? 1 : -1;
+      viewingCount = Math.max(2, Math.min(12, viewingCount + change));
+
+      counter.style.opacity = '0';
+      setTimeout(() => {
+        countEl.textContent = viewingCount;
+        counter.style.opacity = '1';
+      }, 300);
+    }, (20 + Math.random() * 10) * 1000);
+  }
+
+  // Recently Viewed Products
+  function trackRecentlyViewed() {
+    const productData = {
+      id: {{ product.id }},
+      title: {{ product.title | json }},
+      url: '{{ product.url }}',
+      price: '{{ product.price | money }}',
+      image: '{{ product.featured_image | image_url: width: 150 }}'
+    };
+
+    let recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+
+    // Remove if already exists
+    recentlyViewed = recentlyViewed.filter(p => p.id !== productData.id);
+
+    // Add to beginning
+    recentlyViewed.unshift(productData);
+
+    // Keep only last 4
+    recentlyViewed = recentlyViewed.slice(0, 4);
+
+    localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+  }
+
+  // Initialize features on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    initViewingCounter();
+    trackRecentlyViewed();
   });
 
   // Sticky ATC on scroll

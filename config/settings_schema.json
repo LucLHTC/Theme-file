@@ -164,5 +164,49 @@
         "default": true
       }
     ]
+  },
+  {
+    "name": "Conversion Features",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Social Proof & Urgency"
+      },
+      {
+        "type": "paragraph",
+        "content": "These features help increase conversions by creating urgency and social proof."
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_purchase_notifications",
+        "label": "Enable Purchase Notifications",
+        "info": "Show real-time purchase notifications (simulated)",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_viewing_counter",
+        "label": "Enable Viewing Counter",
+        "info": "Show how many people are viewing the product",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "stock_urgency_threshold",
+        "label": "Stock Urgency Threshold",
+        "info": "Show urgency message when stock is below this number",
+        "min": 5,
+        "max": 20,
+        "step": 1,
+        "default": 10
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_recently_viewed",
+        "label": "Enable Recently Viewed Products",
+        "info": "Show recently viewed products on product pages",
+        "default": true
+      }
+    ]
   }
 ]

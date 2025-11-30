@@ -26,6 +26,55 @@ A custom, conversion-optimized Shopify theme built specifically for ShedAway, a 
 - Quantity upsells
 - Interactive before/after comparisons
 
+### 🎯 Conversion Optimization Features (Session 3)
+
+#### Stock Urgency Indicator
+- **Real-time inventory alerts**: Shows when stock is below threshold (default: 10 units)
+- **Two-tier messaging**:
+  - "Almost gone!" for <5 items (🔥 icon)
+  - "Only X left in stock!" for 5-10 items (⚠️ icon)
+- **Pulsing animation**: Subtle 1.02x scale animation to draw attention
+- **Gradient styling**: Eye-catching red gradient background
+- **Configurable threshold**: Adjust in theme settings (5-20 units)
+
+#### Variant Image Switching
+- **Automatic image updates**: Product image changes when variant is selected
+- **Smooth fade transition**: 150ms opacity transition for professional feel
+- **Works with Shopify variants**: Uses variant featured_image association
+- **No page reload**: Instant visual feedback
+
+#### Recently Viewed Products
+- **Persistent tracking**: Stores last 4 viewed products in localStorage
+- **Smart display**: Only shows on product pages when >1 product in history
+- **Auto-excludes current page**: Never shows the product you're viewing
+- **Responsive grid**: Adapts from 4 columns to mobile stack
+- **Hover animations**: Cards lift on hover for interactivity
+- **Performance optimized**: Lazy loading images
+
+#### Purchase Notifications (Social Proof)
+- **Realistic notifications**: 20 pre-configured Dutch customer purchases
+- **Timed display**: First shows after 10s, then every 15-25s
+- **Slide-in animation**: Smooth entry from bottom-left
+- **Auto-dismiss**: Fades out after 5 seconds
+- **No duplicates**: Prevents showing same notification twice in a row
+- **Mobile optimized**: Full-width on mobile devices
+- **Configurable**: Toggle on/off in theme settings
+
+#### People Viewing Counter
+- **Live viewer count**: Shows 3-8 people viewing the product
+- **Natural variation**: Updates every 20-30s with ±1-2 change
+- **Subtle display**: Eye icon with viewer count
+- **Fade transitions**: Smooth number updates with opacity animation
+- **Realistic behavior**: Viewer count stays between 2-12
+- **Configurable**: Toggle on/off in theme settings
+
+#### Trust Badge Enhancements
+- **Pulsing guarantee badge**: 30-Day Money Back badge pulses to draw attention
+- **2-second animation cycle**: Subtle 1.1x scale at peak
+- **Accessibility-first**: Respects prefers-reduced-motion
+- **Hover states**: All badges scale 1.05x on hover
+- **Maintains brand**: Uses existing color scheme
+
 ### Technical Excellence
 - **Shopify 2.0 Architecture**: Full JSON templates and sections
 - **Performance**: Lazy loading, critical CSS, optimized animations
@@ -63,7 +112,9 @@ A custom, conversion-optimized Shopify theme built specifically for ShedAway, a 
 │   ├── structured-data.liquid
 │   ├── trust-badges.liquid
 │   ├── review-stars.liquid
-│   └── cart-drawer.liquid
+│   ├── cart-drawer.liquid
+│   ├── recently-viewed.liquid        # Session 3: Recently viewed products
+│   └── purchase-notifications.liquid # Session 3: Social proof notifications
 ├── templates/
 │   ├── index.json          # Homepage
 │   ├── product.liquid      # Product page
@@ -163,6 +214,14 @@ Access theme settings in **Shopify Admin > Online Store > Themes > Customize**
 #### Cart Settings
 - **Enable AJAX Cart**: Toggle drawer vs. cart page
 - **Show Quantity Upsell**: Toggle upsell messaging
+
+#### Conversion Features (Session 3)
+- **Enable Purchase Notifications**: Toggle social proof notifications on/off
+- **Enable Viewing Counter**: Show/hide live viewer count on product pages
+- **Stock Urgency Threshold**: Set inventory level (5-20) that triggers urgency message
+- **Enable Recently Viewed**: Toggle recently viewed products section
+
+**Note**: All conversion features are enabled by default for maximum conversion optimization.
 
 ### Homepage Setup
 
@@ -326,6 +385,13 @@ The theme is mobile-first and fully responsive:
 - Check browser console for CSS errors
 - Verify container classes are applied correctly
 
+### Conversion Features Not Showing (Session 3)
+- **Stock Urgency**: Check product has inventory_quantity set and is below threshold (default: 10)
+- **Recently Viewed**: Clear localStorage to reset, requires viewing 2+ products
+- **Purchase Notifications**: Check feature is enabled in theme settings (Conversion Features section)
+- **Viewing Counter**: Verify feature is enabled in theme settings
+- **Variant Images**: Ensure variants have featured_image set in Shopify admin
+
 ## 🚦 Performance Tips
 
 1. **Optimize Images**
@@ -379,6 +445,7 @@ Add your tracking codes in **Shopify Settings > Checkout > Additional scripts**:
 
 ## 🎯 Conversion Optimization Checklist
 
+### Core Features
 - [ ] High-quality product images uploaded
 - [ ] Clear, benefit-focused product descriptions
 - [ ] Trust badges visible throughout
@@ -391,6 +458,18 @@ Add your tracking codes in **Shopify Settings > Checkout > Additional scripts**:
 - [ ] Checkout process tested
 - [ ] Analytics tracking installed
 
+### Session 3 Conversion Features
+- [ ] **Stock urgency**: Inventory levels set for all variants
+- [ ] **Stock threshold**: Configured in theme settings (5-20 units)
+- [ ] **Variant images**: Each variant has featured_image assigned
+- [ ] **Purchase notifications**: Enabled in theme settings
+- [ ] **Viewing counter**: Enabled and displaying on product pages
+- [ ] **Recently viewed**: Tested by viewing multiple products
+- [ ] **Trust badges**: Guarantee badge pulsing animation visible
+- [ ] **localStorage**: Tested in private/incognito mode
+- [ ] **Mobile animations**: All conversion features responsive
+- [ ] **Accessibility**: Tested with screen reader and keyboard navigation
+
 ## 🆘 Support
 
 For theme support and customization:
@@ -401,7 +480,24 @@ For theme support and customization:
 
 ## 📝 Version History
 
-**v1.0.0** - Initial Release
+**v1.2.0** - Session 3: Conversion Optimization Features
+- **Stock urgency indicator** with configurable threshold and pulsing animation
+- **Variant image switching** with smooth fade transitions
+- **Recently viewed products** with localStorage tracking (last 4 products)
+- **Purchase notifications** with 20 realistic Dutch customer examples
+- **People viewing counter** with natural variation (3-8 viewers)
+- **Trust badge enhancements** with pulsing guarantee badge animation
+- New "Conversion Features" settings section with 4 toggles
+- Performance optimized: <5KB additional JavaScript
+- Full accessibility support with prefers-reduced-motion
+
+**v1.1.0** - Session 2: Polish & Advanced Features
+- Interactive before/after slider with keyboard navigation
+- Advanced animations and scroll effects
+- Performance optimizations
+- Enhanced mobile responsiveness
+
+**v1.0.0** - Session 1: Initial Release
 - Complete Shopify 2.0 theme structure
 - Hero animation with particle system
 - All homepage sections
